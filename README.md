@@ -1,6 +1,6 @@
 To facilitate the use of REST4CEP, we have included the following information:
 
-[Installation Manual](Installation Manual.md)
+[Installation Manual](Wiki/Installation Manual.md)
 
 [User Manual](User Manual.md)
 
