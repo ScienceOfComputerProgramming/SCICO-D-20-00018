@@ -1,7 +1,7 @@
 To facilitate the use of REST4CEP, we have included the following information:
 
-[Installation Manual](Wiki/Installation Manual.md)
+[Installation Manual](https://gitlab.com/ucase/public/rest4cep/wikis/Installation-Manual)
 
-[User Manual](User Manual.md)
+[User Manual](https://gitlab.com/ucase/public/rest4cep/wikis/User-Manual)
 
-[Developer Manual](Developer Manual.md)
+[Developer Manual](https://gitlab.com/ucase/public/rest4cep/wikis/Developer-Manual)
