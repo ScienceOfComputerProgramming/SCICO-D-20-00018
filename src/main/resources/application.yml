@@ -1,0 +1,24 @@
+global:
+    database: rest4cep
+    password: REST4CEP.2020$
+    url: angelgamaza.es
+    username: rest4cep
+server:
+    port: 6443
+spring:
+    data:
+        mongodb:
+            authentication-database: ${global.database}
+            database: ${global.database}
+            host: ${global.url}
+            password: ${global.password}
+            port: 3305
+            username: ${global.username}
+    datasource:
+        jdbc-url: jdbc:mysql://${global.url}/${global.database}?useSSL=false
+        password: ${global.password}
+        username: ${global.username}
+users:
+    query:
+        authoritiesquery: SELECT u.username, r.role FROM ldap_users u, ldap_roles r, ldap_user_roles ur WHERE u.username = ? and u.id = ur.user_id and r.id = ur.role_id
+        usernamequery: SELECT username, password, is_enabled FROM ldap_users WHERE username = ?
