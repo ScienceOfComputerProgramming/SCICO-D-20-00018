@@ -48,8 +48,8 @@ public class BeanConfig {
     public UserDetailsService userDetailsService(){
         JdbcDaoImpl jdbcImpl = new JdbcDaoImpl();
         jdbcImpl.setDataSource(dataSource);
-        jdbcImpl.setUsersByUsernameQuery(environment.getProperty("users.query.usernamequery"));
-        jdbcImpl.setAuthoritiesByUsernameQuery(environment.getProperty("users.query.authoritiesquery"));
+        jdbcImpl.setUsersByUsernameQuery(environment.getProperty("application.security.query.username"));
+        jdbcImpl.setAuthoritiesByUsernameQuery(environment.getProperty("application.security.query.authorities"));
         return jdbcImpl;
     }
 

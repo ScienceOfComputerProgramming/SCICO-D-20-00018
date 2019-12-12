@@ -19,6 +19,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig implements WebMvcConfigurer {
 
+    // Class constants
+    private static final String SWAGGER_UI_URL = "/swagger-ui.html";
+
     /**
      * Swagger Esper API configuration
      *
@@ -58,9 +61,9 @@ public class SwaggerConfig implements WebMvcConfigurer {
      */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addRedirectViewController("/", "/swagger-ui.html");
-        registry.addRedirectViewController("/api", "/swagger-ui.html");
-        registry.addRedirectViewController("/doc", "/swagger-ui.html");
+        registry.addRedirectViewController("/", SWAGGER_UI_URL);
+        registry.addRedirectViewController("/api", SWAGGER_UI_URL);
+        registry.addRedirectViewController("/doc", SWAGGER_UI_URL);
     }
 
     /**

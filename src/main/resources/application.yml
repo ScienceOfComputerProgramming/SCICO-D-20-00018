@@ -1,24 +1,36 @@
-global:
-    database: rest4cep
-    password: REST4CEP.2020$
-    url: angelgamaza.es
-    username: rest4cep
+application:
+    security:
+        query:
+            username: SELECT username, password, is_enabled FROM ldap_users WHERE username = ?
+            authorities: SELECT u.username, r.role FROM ldap_users u, ldap_roles r, ldap_user_roles ur WHERE u.username = ? and u.id = ur.user_id and r.id = ur.role_id
+        global-password: REST4CEP.2020$
+    database:
+        url: angelgamaza.es
+        database: rest4cep
+        username: rest4cep
+        password: ${application.security.global-password}
+    credential:
+        design:
+            username: design
+            password: ${application.security.global-password}
+        runtime:
+            username: runtime
+            password: ${application.security.global-password}
 server:
     port: 6443
+    servlet:
+        context-path: /rest4cep
 spring:
     data:
         mongodb:
-            authentication-database: ${global.database}
-            database: ${global.database}
-            host: ${global.url}
-            password: ${global.password}
+            host: ${application.database.url}
             port: 3305
-            username: ${global.username}
+            authentication-database: ${application.database.database}
+            database: ${application.database.database}
+            username: ${application.database.username}
+            password: ${application.security.global-password}
     datasource:
-        jdbc-url: jdbc:mysql://${global.url}/${global.database}?useSSL=false
-        password: ${global.password}
-        username: ${global.username}
-users:
-    query:
-        authoritiesquery: SELECT u.username, r.role FROM ldap_users u, ldap_roles r, ldap_user_roles ur WHERE u.username = ? and u.id = ur.user_id and r.id = ur.role_id
-        usernamequery: SELECT username, password, is_enabled FROM ldap_users WHERE username = ?
+        jdbc-url: jdbc:mysql://${application.database.url}/${application.database.database}?useSSL=false
+        username: ${application.database.username}
+        password: ${application.security.global-password}
+        
