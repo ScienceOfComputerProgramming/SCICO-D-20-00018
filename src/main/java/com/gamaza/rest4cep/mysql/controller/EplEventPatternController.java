@@ -2,7 +2,6 @@ package com.gamaza.rest4cep.mysql.controller;
 
 import com.gamaza.rest4cep.mysql.dto.EplEventPatternWithListDto;
 import com.gamaza.rest4cep.mysql.service.EplEventPatternService;
-import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

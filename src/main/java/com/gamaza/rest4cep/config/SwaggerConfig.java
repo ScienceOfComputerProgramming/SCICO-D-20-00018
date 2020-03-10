@@ -73,7 +73,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
      */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("REST4CEP (Design y Runtime)")
+                .title("REST4CEP (Design & Runtime)")
                 .description("API REST for CEP Design, management and runtime")
                 .version("1.0")
                 .build();
