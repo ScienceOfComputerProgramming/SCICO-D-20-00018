@@ -65,12 +65,12 @@ public class EventTypeController {
         eventTypeService.update(id, eventTypeWithListDto);
     }
 
-    @GetMapping(value = "/enable/{id}")
+    @PutMapping(value = "/enable/{id}")
     public void enable(@PathVariable("id") Integer id){
         eventTypeService.updateStatus(id, true);
     }
 
-    @GetMapping(value = "/disable/{id}")
+    @PutMapping(value = "/disable/{id}")
     public void disable(@PathVariable("id") Integer id){
         eventTypeService.updateStatus(id, false);
     }

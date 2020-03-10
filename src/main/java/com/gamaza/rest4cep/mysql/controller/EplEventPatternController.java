@@ -70,12 +70,12 @@ public class EplEventPatternController {
         eplEventPatternService.update(id, eplEventPatternWithListDto);
     }
 
-    @GetMapping(value = "/deploy/{id}")
+    @PutMapping(value = "/deploy/{id}")
     public void deploy(@PathVariable("id") Integer id){
         eplEventPatternService.updateStatus(id, true);
     }
 
-    @GetMapping(value = "/undeploy/{id}")
+    @PutMapping(value = "/undeploy/{id}")
     public void undeploy(@PathVariable("id") Integer id){
         eplEventPatternService.updateStatus(id, false);
     }
