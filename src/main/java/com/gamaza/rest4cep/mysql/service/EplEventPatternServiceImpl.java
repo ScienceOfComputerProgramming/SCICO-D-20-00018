@@ -26,11 +26,12 @@ public class EplEventPatternServiceImpl implements EplEventPatternService {
 
     /**
      * Constructor injection
+     *
      * @param eplEventPatternDao **eplEventPatternDao**
-     * @param eventTypeDao **eventTypeDao**
-     * @param dozerBeanMapper **dozerBeanMapper**
+     * @param eventTypeDao       **eventTypeDao**
+     * @param dozerBeanMapper    **dozerBeanMapper**
      */
-    public EplEventPatternServiceImpl(final EplEventPatternDao eplEventPatternDao, final EventTypeDao eventTypeDao, final DozerBeanMapper dozerBeanMapper){
+    public EplEventPatternServiceImpl(final EplEventPatternDao eplEventPatternDao, final EventTypeDao eventTypeDao, final DozerBeanMapper dozerBeanMapper) {
         this.eplEventPatternDao = eplEventPatternDao;
         this.eventTypeDao = eventTypeDao;
         this.dozerBeanMapper = dozerBeanMapper;
@@ -69,11 +70,10 @@ public class EplEventPatternServiceImpl implements EplEventPatternService {
     @Override
     public void update(Integer id, EplEventPatternWithListDto eplEventPatternWithListDto) {
         eplEventPatternDao.findById(id).ifPresent(eplEventPattern -> {
-            if(!eplEventPattern.isDeployed()) {
+            if (!eplEventPattern.isDeployed()) {
                 eplEventPatternWithListDto.setId(id);
                 eplEventPatternDao.save(dozerBeanMapper.map(eplEventPatternWithListDto, EplEventPattern.class));
-            }
-            else
+            } else
                 throw new EplEventPatternDeployedException("Can not update a deployed EPL Event Pattern");
         });
     }
@@ -81,17 +81,14 @@ public class EplEventPatternServiceImpl implements EplEventPatternService {
     @Override
     public void updateStatus(Integer id, boolean status) {
         eplEventPatternDao.findById(id).ifPresent(eplEventPattern -> {
-            if(status) {
-                //If the EPL Event Pattern is associated with an MQTT or JuntaAndalucia Event Type, it can be deployed
-                if(!eplEventPattern.getContent().contains("MQTT") && !eplEventPattern.getContent().contains("JuntaAndalucia")) {
-                    //if the EPL Event Pattern has not linked Event Types, it cannot be deployed
-                    if (eplEventPattern.getEventTypes().isEmpty())
-                        throw new EventTypeException("EPL Event Pattern has not Event Types linked");
-                        //If the EPL Event Pattern has disabled Event Types, it cannot be deployed
-                    else eplEventPattern.getEventTypes().forEach(eventType -> {
-                        if (!eventType.isEnabled()) throw new EventTypeException("Some Event Type linked at EPL Event Pattern is disabled");
-                    });
-                }
+            if (status) {
+                //if the EPL Event Pattern has not linked Event Types, it cannot be deployed
+                if (eplEventPattern.getEventTypes().isEmpty())
+                    throw new EventTypeException("EPL Event Pattern has not Event Types linked");
+                    //If the EPL Event Pattern has disabled Event Types, it cannot be deployed
+                else eplEventPattern.getEventTypes().forEach(eventType -> {
+                    if (!eventType.isEnabled()) throw new EventTypeException("Some Event Type linked at EPL Event Pattern is disabled");
+                });
             }
             eplEventPatternDao.updateStatus(id, status);
         });
@@ -100,13 +97,12 @@ public class EplEventPatternServiceImpl implements EplEventPatternService {
     @Override
     public void setPatternLink(Integer eplEventPatternId, Integer eventTypeId, boolean linkStatus) {
         eplEventPatternDao.findById(eplEventPatternId).ifPresent(eplEventPattern -> eventTypeDao.findById(eventTypeId).ifPresent(eventType -> {
-            if(linkStatus) {
-                if(!eplEventPattern.getEventTypes().contains(eventType)) {
+            if (linkStatus) {
+                if (!eplEventPattern.getEventTypes().contains(eventType)) {
                     eplEventPattern.getEventTypes().add(eventType);
                     eventType.getEplEventPatterns().add(eplEventPattern);
                 }
-            }
-            else {
+            } else {
                 if (eplEventPattern.getEventTypes().contains(eventType)) {
                     eplEventPattern.getEventTypes().remove(eventType);
                     eventType.getEplEventPatterns().remove(eplEventPattern);
