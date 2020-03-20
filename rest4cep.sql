@@ -85,7 +85,8 @@ CREATE TABLE event_type
 
 -- Inserts event_type
 INSERT INTO event_type (channel_id, name, description, is_enabled)
-VALUES (170892, 'AirSensors', 'Sensors for AIR Quality', 0);
+VALUES (170892, 'AirSensors', 'Sensors for AIR Quality', 1),
+       (545022, 'WaterSensors', 'Sensors for Water Quality.', 0);
 
 -- --------------------------------------------------------
 
@@ -200,6 +201,12 @@ VALUES ('AirOzone2',
         0, 0),
        ('AirT-6',
         '@Name("AirT-6") insert into AirSensors select 	6 as level, "Air" as property, 	e.id as id, e.name as name, 	e.O3 as O3, e.PM25 as PM25, e.PM10 as PM10, e.CO as CO, e.SO2 as SO2, e.NO2 as NO2, e.T as T from 	pattern [every-distinct (e.id)e = AirSensors((T >= 40))].win:time(8 hour)',
+        0, 0),
+       ('WaterPH-3',
+        '@Name("WaterPH-3") insert into WaterSensors select 	3 as level, "Water" as property, 	e.id as id, e.name as name, 	e.PH as PH, e.Cl as Cl from 	pattern [every-distinct (e.id)e =  WaterSensors((PH > 7))].win:time(1 hour)',
+        0, 0),
+       ('WaterCl-3',
+        '@Name("WaterCl-3") insert into WaterSensors select 	3 as level, "Water" as property, 	e.id as id, e.name as name, 	e.PH as PH, e.Cl as Cl from 	pattern [every-distinct (e.id)e =  WaterSensors((Cl > 2))].win:time(1 hour)',
         0, 0);
 
 -- --------------------------------------------------------
@@ -258,4 +265,6 @@ VALUES ((SELECT id FROM event_type WHERE channel_id = 170892), (SELECT id from e
        ((SELECT id FROM event_type WHERE channel_id = 170892), (SELECT id from event_pattern WHERE name = 'AirSO2-5')),
        ((SELECT id FROM event_type WHERE channel_id = 170892), (SELECT id from event_pattern WHERE name = 'AirSO2-6')),
        ((SELECT id FROM event_type WHERE channel_id = 170892), (SELECT id from event_pattern WHERE name = 'AirT-1')),
-       ((SELECT id FROM event_type WHERE channel_id = 170892), (SELECT id from event_pattern WHERE name = 'AirT-6'));
+       ((SELECT id FROM event_type WHERE channel_id = 170892), (SELECT id from event_pattern WHERE name = 'AirT-6')),
+       ((SELECT id FROM event_type WHERE channel_id = 545022), (SELECT id from event_pattern WHERE name = 'WaterPH-3')),
+       ((SELECT id FROM event_type WHERE channel_id = 545022), (SELECT id from event_pattern WHERE name = 'WaterCl-3'));
