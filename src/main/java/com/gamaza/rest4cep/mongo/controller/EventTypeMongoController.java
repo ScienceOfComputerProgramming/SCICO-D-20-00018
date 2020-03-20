@@ -1,56 +1,57 @@
 package com.gamaza.rest4cep.mongo.controller;
 
 import com.gamaza.rest4cep.mongo.dto.EventTypeMongoDto;
+import com.gamaza.rest4cep.mongo.dto.EventTypeMongoPostDto;
 import com.gamaza.rest4cep.mongo.service.EventTypeMongoService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
- * Event Types (Mongo version) Controller
+ * Event Type Controller
  */
 @RestController
-@RequestMapping(value = "/runtime/event_types")
+@RequestMapping(value = "/runtime/event_type")
 public class EventTypeMongoController {
 
-    /* Private variables for injection */
+    // Private variables for injection
     private final EventTypeMongoService eventTypeMongoService;
 
     /**
      * Constructor injection
-     * @param eventTypeMongoService **eventTypeMongoService**
      */
-    public EventTypeMongoController(final EventTypeMongoService eventTypeMongoService){
+    public EventTypeMongoController(EventTypeMongoService eventTypeMongoService) {
         this.eventTypeMongoService = eventTypeMongoService;
     }
 
     @PostMapping
-    public @ResponseBody EventTypeMongoDto insert(@RequestBody EventTypeMongoDto eventTypeMongoDto){
-        return eventTypeMongoService.create(eventTypeMongoDto);
+    public EventTypeMongoDto insert(@Valid @RequestBody EventTypeMongoPostDto eventTypePostDto) {
+        return eventTypeMongoService.create(eventTypePostDto);
     }
 
     @GetMapping
-    public @ResponseBody List<EventTypeMongoDto> all(){
+    public List<EventTypeMongoDto> all() {
         return eventTypeMongoService.readAll();
     }
 
     @GetMapping(value = "/{id}")
-    public @ResponseBody EventTypeMongoDto oneById(@PathVariable("id") String id){
+    public EventTypeMongoDto oneById(@PathVariable String id) {
         return eventTypeMongoService.readOneById(id);
     }
 
     @GetMapping(value = "/last")
-    public @ResponseBody List<EventTypeMongoDto> last5(){
+    public List<EventTypeMongoDto> last5() {
         return eventTypeMongoService.readLast5();
     }
 
     @DeleteMapping
-    public void deleteAll(){
+    public void deleteAll() {
         eventTypeMongoService.deleteAll();
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteOne(@PathVariable("id") String id){
+    public void deleteOne(@PathVariable String id) {
         eventTypeMongoService.deleteOne(id);
     }
 

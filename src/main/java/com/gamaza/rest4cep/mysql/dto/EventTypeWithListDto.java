@@ -4,31 +4,28 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * Event Types DTO (With EPL Event Pattern List)
+ * Event Type Data Transfer Object (With Event Patterns List)
  */
 @Getter @Setter @ToString
-public class EventTypeWithListDto {
+public class EventTypeWithListDto implements Serializable {
 
+    // Generated SerialVersionUID
+    private static final long serialVersionUID = -1517315714926486239L;
+
+    // Private variables
     private Integer id;
-
-    @NotNull
     private Integer channel;
-
-    @NotNull
     private String name;
-
-    @NotNull
-    private String description = "No description";
-
-    private boolean isEnabled = false;
-
-    @NotNull
-    private List<EplEventPatternDto> eplEventPatterns = new ArrayList<>();
+    private String description;
+    private boolean enabled;
+    private Timestamp createdDate;
+    private Timestamp lastModifiedDate;
+    private List<EventPatternDto> eventPatterns;
 
 }
 

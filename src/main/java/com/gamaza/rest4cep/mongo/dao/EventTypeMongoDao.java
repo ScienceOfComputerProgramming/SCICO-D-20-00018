@@ -7,21 +7,19 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Event Types (Mongo version) DAO
+ * Event Type Data Access Object
  */
 @Repository
 public interface EventTypeMongoDao extends MongoRepository<EventTypeMongo, String> {
 
     /**
      * Get all Event Types in database ordered by date
-     * @return eventTypes list
      */
-    List<EventTypeMongo> findAllByOrderByInsertionDateDesc();
+    List<EventTypeMongo> findAllByOrderByCreatedDateDesc();
 
     /**
      * Get Last 5 Event Types in database
-     * @return Last 5 eventTypes list
      */
-    List<EventTypeMongo> findTop5ByOrderByInsertionDateDesc();
+    List<EventTypeMongo> findTop5ByOrderByCreatedDateDesc();
 
 }

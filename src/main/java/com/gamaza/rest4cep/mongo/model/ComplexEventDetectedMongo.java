@@ -1,29 +1,33 @@
 package com.gamaza.rest4cep.mongo.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
 
+import static com.gamaza.rest4cep.config.constant.EntityConstants.COLLECTION_COMPLEX_EVENTS_DETECTED;
+
 /**
  * Complex Events Detected (Mongo version) Model
  */
-@Document(collection = "complex_events_detected")
-@Getter @Setter @EqualsAndHashCode
+@Document(collection = COLLECTION_COMPLEX_EVENTS_DETECTED)
+@Getter @Setter
 public class ComplexEventDetectedMongo {
 
     @Id
     private String id;
 
-    @Field("detected_by")
+    @Field(value = "detected_by", order = 1)
     private String detectedBy;
 
-    @Field("detected_event")
+    @Field(value = "detected_event", order = 2)
     private String detectedEvent;
 
-    @Field("insertion_date")
-    private String insertionDate;
+    @CreatedDate
+    @Field(value = "created_date", order = 3)
+    private String createdDate;
+
 }

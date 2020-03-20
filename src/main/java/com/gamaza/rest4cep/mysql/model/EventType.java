@@ -1,22 +1,26 @@
 package com.gamaza.rest4cep.mysql.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.gamaza.rest4cep.config.constant.EntityConstants.*;
+
 /**
- * Event Types Database Model
+ * Event Type Database Model
  */
-@Entity @Table(name = "esper_event_types")
-@Getter @Setter @EqualsAndHashCode
-public class EventType {
+@Entity
+@Table(name = TABLE_EVENT_TYPE)
+@Getter
+@Setter
+public class EventType extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false, unique = true)
     private Integer id;
 
     @Column(name = "channel_id", nullable = false, unique = true)
@@ -29,10 +33,14 @@ public class EventType {
     private String description;
 
     @Column(name = "is_enabled", nullable = false)
-    private boolean isEnabled;
+    private boolean enabled;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinTable(name = "esper_event_type_epl_patterns", joinColumns = {@JoinColumn(name = "event_type_id")}, inverseJoinColumns = {@JoinColumn(name = "epl_pattern_id")})
-    private List<EplEventPattern> eplEventPatterns;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = TABLE_EVENT_TYPE_EVENT_PATTERN,
+            joinColumns = @JoinColumn(name = JOIN_COLUMN_EVENT_TYPE_ID),
+            inverseJoinColumns = @JoinColumn(name = JOIN_COLUMN_EVENT_PATTERN_ID)
+    )
+    private List<EventPattern> eventPatterns = new ArrayList<>();
 
 }

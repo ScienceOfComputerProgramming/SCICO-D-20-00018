@@ -1,37 +1,32 @@
 package com.gamaza.rest4cep.mongo.service;
 
 import com.gamaza.rest4cep.mongo.dto.EventTypeMongoDto;
+import com.gamaza.rest4cep.mongo.dto.EventTypeMongoPostDto;
 
 import java.util.List;
 
 /**
- * Event Types (Mongo version) Service
+ * Event Type Service
  */
 public interface EventTypeMongoService {
 
     /**
      * Insert a new Event Type in database
-     * @param eventTypeMongoDto **eventTypeMongoDto**
-     * @return eventType created
      */
-    EventTypeMongoDto create(EventTypeMongoDto eventTypeMongoDto);
+    EventTypeMongoDto create(EventTypeMongoPostDto eventTypePostDto);
 
     /**
      * Get all Event Types in database
-     * @return eventType list
      */
     List<EventTypeMongoDto> readAll();
 
     /**
      * Search and return one Event Type in database by id
-     * @param id **id**
-     * @return eventType found
      */
     EventTypeMongoDto readOneById(String id);
 
     /**
      * Get last 5 Event Types in database
-     * @return Last 5 eventType list
      */
     List<EventTypeMongoDto> readLast5();
 
@@ -42,7 +37,6 @@ public interface EventTypeMongoService {
 
     /**
      * Delete one Event Type in database
-     * @param id **id**
      */
     void deleteOne(String id);
 

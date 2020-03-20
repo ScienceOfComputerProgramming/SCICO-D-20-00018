@@ -1,29 +1,28 @@
 package com.gamaza.rest4cep.mysql.dto;
 
-import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.sql.Timestamp;
 
 /**
- * Event Types DTO
+ * Event Type Data Transfer Object
  */
 @Getter @Setter @ToString
-public class EventTypeDto {
+public class EventTypeDto implements Serializable {
 
+    // Generated SerialVersionUID
+    private static final long serialVersionUID = -8843543030824448187L;
+
+    // Private variables
     private Integer id;
-
-    @NotNull
     private Integer channel;
-
-    @NotNull
     private String name;
-
-    @NotNull
-    private String description = "No description";
-
-    private boolean isEnabled = false;
+    private String description;
+    private boolean enabled;
+    private Timestamp createdDate;
+    private Timestamp lastModifiedDate;
 
 }

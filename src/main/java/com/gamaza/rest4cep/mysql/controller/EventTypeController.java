@@ -1,81 +1,84 @@
 package com.gamaza.rest4cep.mysql.controller;
 
+import com.gamaza.rest4cep.mysql.dto.EventTypeDto;
+import com.gamaza.rest4cep.mysql.dto.EventTypePostDto;
+import com.gamaza.rest4cep.mysql.dto.EventTypePutDto;
 import com.gamaza.rest4cep.mysql.dto.EventTypeWithListDto;
 import com.gamaza.rest4cep.mysql.service.EventTypeService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
- * Event Types Controller
+ * Event Type Controller
  */
 @RestController
-@RequestMapping(value = "/design/event_types")
+@RequestMapping(value = "/design/event_type")
 public class EventTypeController {
 
-    /* Private variables for injection */
+    // Private variables for injection
     private final EventTypeService eventTypeService;
 
     /**
      * Constructor injection
-     * @param eventTypeService **eventTypeService**
      */
-    public EventTypeController(final EventTypeService eventTypeService){
+    public EventTypeController(EventTypeService eventTypeService) {
         this.eventTypeService = eventTypeService;
     }
 
     @PostMapping
-    public @ResponseBody EventTypeWithListDto insert(@RequestBody EventTypeWithListDto eventTypeWithListDto){
-        return eventTypeService.create(eventTypeWithListDto);
+    public EventTypeWithListDto insert(@Valid @RequestBody EventTypePostDto eventTypePostDto) {
+        return eventTypeService.create(eventTypePostDto);
     }
 
     @GetMapping
-    public @ResponseBody List<EventTypeWithListDto> all(){
+    public List<EventTypeDto> all() {
         return eventTypeService.readAll();
     }
 
     @GetMapping(value = "/enabled")
-    public @ResponseBody List<EventTypeWithListDto> allEnabled(){
+    public List<EventTypeDto> allEnabled() {
         return eventTypeService.readAllByIsEnabled(true);
     }
 
     @GetMapping(value = "/disabled")
-    public @ResponseBody List<EventTypeWithListDto> allDisabled(){
+    public List<EventTypeDto> allDisabled() {
         return eventTypeService.readAllByIsEnabled(false);
     }
 
     @GetMapping(value = "/{id}")
-    public @ResponseBody EventTypeWithListDto oneById(@PathVariable("id") Integer id){
+    public EventTypeWithListDto oneById(@PathVariable Integer id) {
         return eventTypeService.readOneById(id);
     }
 
-    @GetMapping(value = "/name/{name}")
-    public @ResponseBody EventTypeWithListDto oneByName(@PathVariable("name") String name){
+    @GetMapping(value = "/name")
+    public EventTypeWithListDto oneByName(@RequestParam String name) {
         return eventTypeService.readOneByName(name);
     }
 
     @GetMapping(value = "/channel/{channelId}")
-    public @ResponseBody EventTypeWithListDto oneByChannelId(@PathVariable("channelId") Integer channelId){
+    public EventTypeWithListDto oneByChannelId(@PathVariable Integer channelId) {
         return eventTypeService.readOneByChannelId(channelId);
     }
 
     @PutMapping(value = "/{id}")
-    public void update(@PathVariable("id") Integer id, @RequestBody EventTypeWithListDto eventTypeWithListDto){
-        eventTypeService.update(id, eventTypeWithListDto);
+    public void update(@PathVariable Integer id, @Valid @RequestBody EventTypePutDto eventTypePutDto) {
+        eventTypeService.update(id, eventTypePutDto);
     }
 
     @PutMapping(value = "/enable/{id}")
-    public void enable(@PathVariable("id") Integer id){
+    public void enable(@PathVariable Integer id) {
         eventTypeService.updateStatus(id, true);
     }
 
     @PutMapping(value = "/disable/{id}")
-    public void disable(@PathVariable("id") Integer id){
+    public void disable(@PathVariable Integer id) {
         eventTypeService.updateStatus(id, false);
     }
 
     @DeleteMapping(value = "/{id}")
-    public void delete(@PathVariable("id") Integer id){
+    public void delete(@PathVariable Integer id) {
         eventTypeService.delete(id);
     }
 

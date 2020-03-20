@@ -8,30 +8,23 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Event Types DAO
+ * Event Type Data Access Object
  */
 @Repository
 public interface EventTypeDao extends CrudRepository<EventType, Integer> {
 
     /**
      * Get all enabled/disabled Event Types in database
-     * @param status **status**
-     * @return eventType enabled/disabled list
      */
-    @SuppressWarnings("SpringDataMethodInconsistencyInspection")
-    List<EventType> findAllByIsEnabled(boolean status);
+    List<EventType> findAllByEnabled(boolean status);
 
     /**
      * Search Event Types in database by name
-     * @param name **name**
-     * @return eventType found
      */
     Optional<EventType> findByName(String name);
 
     /**
      * Search Event Types in database by channel id
-     * @param channelId **channelId**
-     * @return eventType found
      */
     Optional<EventType> findByChannel(Integer channelId);
 
