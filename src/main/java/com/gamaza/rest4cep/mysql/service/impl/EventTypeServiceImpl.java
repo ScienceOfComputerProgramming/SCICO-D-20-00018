@@ -1,5 +1,6 @@
 package com.gamaza.rest4cep.mysql.service.impl;
 
+import com.gamaza.rest4cep.config.exception.AlreadyExistsException;
 import com.gamaza.rest4cep.config.exception.NotFoundException;
 import com.gamaza.rest4cep.config.exception.UpdateException;
 import com.gamaza.rest4cep.mysql.dao.EventPatternDao;
@@ -12,6 +13,7 @@ import com.gamaza.rest4cep.mysql.mapper.EventTypeMapper;
 import com.gamaza.rest4cep.mysql.model.EventType;
 import com.gamaza.rest4cep.mysql.service.EventTypeService;
 import com.google.common.collect.Lists;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,9 +44,19 @@ public class EventTypeServiceImpl implements EventTypeService {
 
     @Override
     public EventTypeWithListDto create(EventTypePostDto eventTypePostDto) {
-        EventType createdEventType = eventTypeDao.save(
-                eventTypeMapper.mapToEntity(eventTypePostDto)
-        );
+        EventType createdEventType;
+        try {
+            createdEventType = eventTypeDao.save(
+                    eventTypeMapper.mapToEntity(eventTypePostDto)
+            );
+        } catch (DataIntegrityViolationException e) {
+            String exceptionMessage = String.format(
+                    MESSAGE_ALREADY_EXISTS_EXCEPTION,
+                    OBJECT_EVENT_PATTERN,
+                    String.format(FORMAT_CHANNEL_NAME_TEXT, eventTypePostDto.getChannel(), eventTypePostDto.getName())
+            );
+            throw new AlreadyExistsException(exceptionMessage);
+        }
         return eventTypeMapper.mapToDtoWithList(createdEventType);
     }
 
@@ -69,7 +81,11 @@ public class EventTypeServiceImpl implements EventTypeService {
         if (retrievedEventType.isPresent())
             return eventTypeMapper.mapToDtoWithList(retrievedEventType.get());
         else {
-            String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_TYPE, "id=" + id);
+            String exceptionMessage = String.format(
+                    MESSAGE_NOT_FOUND_EXCEPTION,
+                    OBJECT_EVENT_TYPE,
+                    String.format(FORMAT_ID_TEXT, id)
+            );
             throw new NotFoundException(exceptionMessage);
         }
     }
@@ -80,7 +96,11 @@ public class EventTypeServiceImpl implements EventTypeService {
         if (retrievedEventType.isPresent())
             return eventTypeMapper.mapToDtoWithList(retrievedEventType.get());
         else {
-            String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_TYPE, "name=" + name);
+            String exceptionMessage = String.format(
+                    MESSAGE_NOT_FOUND_EXCEPTION,
+                    OBJECT_EVENT_TYPE,
+                    String.format(FORMAT_NAME_TEXT, name)
+            );
             throw new NotFoundException(exceptionMessage);
         }
     }
@@ -91,29 +111,50 @@ public class EventTypeServiceImpl implements EventTypeService {
         if (retrievedEventType.isPresent())
             return eventTypeMapper.mapToDtoWithList(retrievedEventType.get());
         else {
-            String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_TYPE, "channelId=" + channelId);
+            String exceptionMessage = String.format(
+                    MESSAGE_NOT_FOUND_EXCEPTION,
+                    OBJECT_EVENT_TYPE,
+                    String.format(FORMAT_CHANNEL_TEXT, channelId)
+            );
             throw new NotFoundException(exceptionMessage);
         }
     }
 
     @Override
     public void update(Integer id, EventTypePutDto eventTypePutDto) {
-        // Search the eventType in database for update only if exists
-        eventTypeDao.findById(id).ifPresentOrElse(
-                eventType -> {
-                    if (!eventType.isEnabled()) {
-                        EventType mappedEventType = eventTypeMapper.mapToEntity(eventType, eventTypePutDto);
-                        eventTypeDao.save(mappedEventType);
-                    } else {
-                        String exceptionMessage = String.format(MESSAGE_UPDATE_EVENT_TYPE_EXCEPTION, OBJECT_EVENT_TYPE, "id=" + id);
-                        throw new UpdateException(exceptionMessage);
+        try {
+            // Search the eventType in database for update only if exists
+            eventTypeDao.findById(id).ifPresentOrElse(
+                    eventType -> {
+                        if (!eventType.isEnabled()) {
+                            EventType mappedEventType = eventTypeMapper.mapToEntity(eventType, eventTypePutDto);
+                            eventTypeDao.save(mappedEventType);
+                        } else {
+                            String exceptionMessage = String.format(
+                                    MESSAGE_UPDATE_EVENT_TYPE_EXCEPTION,
+                                    OBJECT_EVENT_TYPE,
+                                    String.format(FORMAT_ID_TEXT, id)
+                            );
+                            throw new UpdateException(exceptionMessage);
+                        }
+                    },
+                    () -> {
+                        String exceptionMessage = String.format(
+                                MESSAGE_NOT_FOUND_EXCEPTION,
+                                OBJECT_EVENT_TYPE,
+                                String.format(FORMAT_ID_TEXT, id)
+                        );
+                        throw new NotFoundException(exceptionMessage);
                     }
-                },
-                () -> {
-                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_TYPE, "id=" + id);
-                    throw new NotFoundException(exceptionMessage);
-                }
-        );
+            );
+        } catch (DataIntegrityViolationException e) {
+            String exceptionMessage = String.format(
+                    MESSAGE_ALREADY_EXISTS_EXCEPTION,
+                    OBJECT_EVENT_PATTERN,
+                    String.format(FORMAT_CHANNEL_NAME_TEXT, eventTypePutDto.getChannel(), eventTypePutDto.getName())
+            );
+            throw new AlreadyExistsException(exceptionMessage);
+        }
     }
 
     @Override
@@ -121,7 +162,10 @@ public class EventTypeServiceImpl implements EventTypeService {
         // Retrieve the Event Type from database (if exists)
         EventType retrievedEventype = eventTypeDao.findById(id).orElseThrow(
                 () -> {
-                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_TYPE, "id=" + id);
+                    String exceptionMessage = String.format(
+                            MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_TYPE,
+                            String.format(FORMAT_ID_TEXT, id)
+                    );
                     throw new NotFoundException(exceptionMessage);
                 }
         );
@@ -135,7 +179,7 @@ public class EventTypeServiceImpl implements EventTypeService {
                 String exceptionMessage = String.format(
                         MESSAGE_UPDATE_STATUS_EVENT_TYPE_EXCEPTION,
                         OBJECT_EVENT_TYPE,
-                        "id=" + id,
+                        String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_NOT
                 );
                 throw new UpdateException(exceptionMessage);
@@ -145,7 +189,7 @@ public class EventTypeServiceImpl implements EventTypeService {
                 String exceptionMessage = String.format(
                         MESSAGE_UPDATE_STATUS_EVENT_TYPE_EXCEPTION,
                         OBJECT_EVENT_TYPE,
-                        "id=" + id,
+                        String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_ALREADY
                 );
                 throw new UpdateException(exceptionMessage);
@@ -169,7 +213,11 @@ public class EventTypeServiceImpl implements EventTypeService {
                     eventTypeDao.deleteById(id);
                 },
                 () -> {
-                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_TYPE, "id=" + id);
+                    String exceptionMessage = String.format(
+                            MESSAGE_NOT_FOUND_EXCEPTION,
+                            OBJECT_EVENT_TYPE,
+                            String.format(FORMAT_ID_TEXT, id)
+                    );
                     throw new NotFoundException(exceptionMessage);
                 }
         );

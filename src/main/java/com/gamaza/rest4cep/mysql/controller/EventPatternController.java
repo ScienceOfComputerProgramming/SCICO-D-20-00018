@@ -42,7 +42,7 @@ public class EventPatternController {
         return eventPatternService.readAllByIsReadyToDeploy(true);
     }
 
-    @GetMapping(value = "/notreadytodeploy")
+    @GetMapping(value = "/unreadytodeploy")
     public List<EventPatternDto> allNotReadyToDeploy() {
         return eventPatternService.readAllByIsReadyToDeploy(false);
     }

@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.gamaza.rest4cep.config.constant.ExceptionConstants.MESSAGE_NOT_FOUND_EXCEPTION;
-import static com.gamaza.rest4cep.config.constant.ExceptionConstants.OBJECT_COMPLEX_EVENT_DETECTED;
+import static com.gamaza.rest4cep.config.constant.ExceptionConstants.*;
 
 /**
  * Complex Events Detected Service Implementation
@@ -54,7 +53,11 @@ public class ComplexEventDetectedMongoServiceImpl implements ComplexEventDetecte
     public ComplexEventDetectedMongoDto readOneById(String id) {
         ComplexEventDetectedMongo retrievedComplexEventDetectedMongo = complexEventMongoDao.findById(id).orElseThrow(
                 () -> {
-                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_COMPLEX_EVENT_DETECTED, "id=" + id);
+                    String exceptionMessage = String.format(
+                            MESSAGE_NOT_FOUND_EXCEPTION,
+                            OBJECT_COMPLEX_EVENT_DETECTED,
+                            String.format(FORMAT_ID_TEXT, id)
+                    );
                     throw new NotFoundException(exceptionMessage);
                 }
         );
@@ -78,7 +81,11 @@ public class ComplexEventDetectedMongoServiceImpl implements ComplexEventDetecte
     public void deleteOne(String id) {
         ComplexEventDetectedMongo retrievedComplexEventDetectedMongo = complexEventMongoDao.findById(id).orElseThrow(
                 () -> {
-                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_COMPLEX_EVENT_DETECTED, "id=" + id);
+                    String exceptionMessage = String.format(
+                            MESSAGE_NOT_FOUND_EXCEPTION,
+                            OBJECT_COMPLEX_EVENT_DETECTED,
+                            String.format(FORMAT_ID_TEXT, id)
+                    );
                     throw new NotFoundException(exceptionMessage);
                 }
         );

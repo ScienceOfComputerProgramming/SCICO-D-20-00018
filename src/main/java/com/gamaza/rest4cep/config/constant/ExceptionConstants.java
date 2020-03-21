@@ -7,6 +7,7 @@ public final class ExceptionConstants {
 
     // Messages
     public static final String MESSAGE_NOT_FOUND_EXCEPTION = "The object %s with %s not found";
+    public static final String MESSAGE_ALREADY_EXISTS_EXCEPTION = "The object %s with %s already exists";
     public static final String MESSAGE_UPDATE_EVENT_TYPE_EXCEPTION = "The object %s with %s has to be disabled before update";
     public static final String MESSAGE_UPDATE_STATUS_EVENT_TYPE_EXCEPTION = "The object %s with %s is %s enabled";
     public static final String MESSAGE_UPDATE_EVENT_PATTERN_EXCEPTION = "The object %s with %s can not be updated because it is currently deployed";
@@ -19,6 +20,12 @@ public final class ExceptionConstants {
     public static final String COMMENTS_UPDATE_STATUS_EMPTY_EVENT_TYPES = "It is not linked with any %s";
     public static final String COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_EVENT_TYPE = "It has %s %s objects not enabled";
     public static final String COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_PATTERN_CONTENT = "It has %s %s objects not present in his content query";
+
+    // Format constants
+    public static final String FORMAT_ID_TEXT = "[id=%s]";
+    public static final String FORMAT_NAME_TEXT = "[name=%s]";
+    public static final String FORMAT_CHANNEL_TEXT = "[channel=%s]";
+    public static final String FORMAT_CHANNEL_NAME_TEXT = "[channel=%s, name=%s]";
 
     // Operation strings
     public static final String OPERATION_LINK = "link";

@@ -1,5 +1,6 @@
 package com.gamaza.rest4cep.mysql.service.impl;
 
+import com.gamaza.rest4cep.config.exception.AlreadyExistsException;
 import com.gamaza.rest4cep.config.exception.LinkException;
 import com.gamaza.rest4cep.config.exception.NotFoundException;
 import com.gamaza.rest4cep.config.exception.UpdateException;
@@ -14,6 +15,7 @@ import com.gamaza.rest4cep.mysql.model.EventPattern;
 import com.gamaza.rest4cep.mysql.model.EventType;
 import com.gamaza.rest4cep.mysql.service.EventPatternService;
 import com.google.common.collect.Lists;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,9 +46,19 @@ public class EventPatternServiceImpl implements EventPatternService {
 
     @Override
     public EventPatternWithListDto create(EventPatternPostDto eventPatternPostDto) {
-        EventPattern createdEventPattern = eventPatternDao.save(
-                eventPatternMapper.mapToEntity(eventPatternPostDto)
-        );
+        EventPattern createdEventPattern;
+        try {
+            createdEventPattern = eventPatternDao.save(
+                    eventPatternMapper.mapToEntity(eventPatternPostDto)
+            );
+        } catch (DataIntegrityViolationException e) {
+            String exceptionMessage = String.format(
+                    MESSAGE_ALREADY_EXISTS_EXCEPTION,
+                    OBJECT_EVENT_PATTERN,
+                    String.format(FORMAT_NAME_TEXT, eventPatternPostDto.getName())
+            );
+            throw new AlreadyExistsException(exceptionMessage);
+        }
         return eventPatternMapper.mapToDtoWithList(createdEventPattern);
     }
 
@@ -77,7 +89,11 @@ public class EventPatternServiceImpl implements EventPatternService {
         if (retrievedEventPattern.isPresent())
             return eventPatternMapper.mapToDtoWithList(retrievedEventPattern.get());
         else {
-            String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
+            String exceptionMessage = String.format(
+                    MESSAGE_NOT_FOUND_EXCEPTION,
+                    OBJECT_EVENT_PATTERN,
+                    String.format(FORMAT_ID_TEXT, id)
+            );
             throw new NotFoundException(exceptionMessage);
         }
     }
@@ -88,7 +104,11 @@ public class EventPatternServiceImpl implements EventPatternService {
         if (retrievedEventPattern.isPresent())
             return eventPatternMapper.mapToDtoWithList(retrievedEventPattern.get());
         else {
-            String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "name=" + name);
+            String exceptionMessage = String.format(
+                    MESSAGE_NOT_FOUND_EXCEPTION,
+                    OBJECT_EVENT_PATTERN,
+                    String.format(FORMAT_NAME_TEXT, name)
+            );
             throw new NotFoundException(exceptionMessage);
         }
     }
@@ -98,7 +118,11 @@ public class EventPatternServiceImpl implements EventPatternService {
         // Retrieve the Event Pattern from database (if exists)
         EventPattern retrievedEventPattern = eventPatternDao.findById(id).orElseThrow(
                 () -> {
-                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
+                    String exceptionMessage = String.format(
+                            MESSAGE_NOT_FOUND_EXCEPTION,
+                            OBJECT_EVENT_PATTERN,
+                            String.format(FORMAT_ID_TEXT, id)
+                    );
                     throw new NotFoundException(exceptionMessage);
                 }
         );
@@ -107,7 +131,11 @@ public class EventPatternServiceImpl implements EventPatternService {
             EventPattern mappedEventPattern = eventPatternMapper.mapToEntity(retrievedEventPattern, eventPatternPutDto);
             eventPatternDao.save(mappedEventPattern);
         } else {
-            String exceptionMessage = String.format(MESSAGE_UPDATE_EVENT_PATTERN_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
+            String exceptionMessage = String.format(
+                    MESSAGE_UPDATE_EVENT_PATTERN_EXCEPTION,
+                    OBJECT_EVENT_PATTERN,
+                    String.format(FORMAT_ID_TEXT, id)
+            );
             throw new UpdateException(exceptionMessage);
         }
     }
@@ -117,7 +145,11 @@ public class EventPatternServiceImpl implements EventPatternService {
         // Retrieve the Event Pattern from database (if exists)
         EventPattern retrievedEventPattern = eventPatternDao.findById(id).orElseThrow(
                 () -> {
-                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
+                    String exceptionMessage = String.format(
+                            MESSAGE_NOT_FOUND_EXCEPTION,
+                            OBJECT_EVENT_PATTERN,
+                            String.format(FORMAT_ID_TEXT, id)
+                    );
                     throw new NotFoundException(exceptionMessage);
                 }
         );
@@ -128,7 +160,7 @@ public class EventPatternServiceImpl implements EventPatternService {
                 String exceptionMessage = String.format(
                         MESSAGE_UPDATE_STATUS_INCONSISTENT_EVENT_PATTERN_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
-                        "id=" + id,
+                        String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_ALREADY
                 );
                 throw new UpdateException(exceptionMessage);
@@ -140,7 +172,7 @@ public class EventPatternServiceImpl implements EventPatternService {
                 String exceptionMessage = String.format(
                         MESSAGE_UPDATE_STATUS_INCONSISTENT_EVENT_PATTERN_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
-                        "id=" + id,
+                        String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_NOT
                 );
                 throw new UpdateException(exceptionMessage);
@@ -154,7 +186,11 @@ public class EventPatternServiceImpl implements EventPatternService {
         // Retrieve the Event Pattern from database (if exists)
         EventPattern retrievedEventPattern = eventPatternDao.findById(id).orElseThrow(
                 () -> {
-                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
+                    String exceptionMessage = String.format(
+                            MESSAGE_NOT_FOUND_EXCEPTION,
+                            OBJECT_EVENT_PATTERN,
+                            String.format(FORMAT_ID_TEXT, id)
+                    );
                     throw new NotFoundException(exceptionMessage);
                 }
         );
@@ -165,7 +201,7 @@ public class EventPatternServiceImpl implements EventPatternService {
                 String exceptionMessage = String.format(
                         MESSAGE_UPDATE_STATUS_DEPLOYED_EVENT_PATTERN_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
-                        "id=" + id,
+                        String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_ALREADY
                 );
                 throw new UpdateException(exceptionMessage);
@@ -176,7 +212,7 @@ public class EventPatternServiceImpl implements EventPatternService {
                 String exceptionMessage = String.format(
                         MESSAGE_UPDATE_STATUS_DEPLOYED_EVENT_PATTERN_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
-                        "id=" + id,
+                        String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_NOT
                 );
                 throw new UpdateException(exceptionMessage);
@@ -200,7 +236,7 @@ public class EventPatternServiceImpl implements EventPatternService {
             String exceptionMessage = String.format(
                     MESSAGE_UPDATE_STATUS_EVENT_PATTERN_EXCEPTION,
                     OBJECT_EVENT_PATTERN,
-                    "id=" + eventPatternId,
+                    String.format(FORMAT_ID_TEXT, eventPatternId),
                     String.format(COMMENTS_UPDATE_STATUS_EMPTY_EVENT_TYPES, OBJECT_EVENT_TYPE)
             );
             throw new UpdateException(exceptionMessage);
@@ -214,7 +250,7 @@ public class EventPatternServiceImpl implements EventPatternService {
             String exceptionMessage = String.format(
                     MESSAGE_UPDATE_STATUS_EVENT_PATTERN_EXCEPTION,
                     OBJECT_EVENT_PATTERN,
-                    "id=" + eventPatternId,
+                    String.format(FORMAT_ID_TEXT, eventPatternId),
                     String.format(COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_EVENT_TYPE, notEnabledEventTypes, OBJECT_EVENT_TYPE)
             );
             throw new UpdateException(exceptionMessage);
@@ -228,7 +264,7 @@ public class EventPatternServiceImpl implements EventPatternService {
             String exceptionMessage = String.format(
                     MESSAGE_UPDATE_STATUS_EVENT_PATTERN_EXCEPTION,
                     OBJECT_EVENT_PATTERN,
-                    "id=" + eventPatternId,
+                    String.format(FORMAT_ID_TEXT, eventPatternId),
                     String.format(COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_PATTERN_CONTENT, notContainedEventTypes, OBJECT_EVENT_TYPE)
             );
             throw new UpdateException(exceptionMessage);
@@ -239,10 +275,18 @@ public class EventPatternServiceImpl implements EventPatternService {
     public void setPatternLink(Integer eventPatternId, Integer eventTypeId, boolean linkStatus) {
         // Retrieve the Event Type and Event Pattern objects from database (if they exist)
         EventType retrievedEventType = eventTypeDao.findById(eventTypeId).orElseThrow(
-                () -> new NotFoundException(String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_TYPE, "id=" + eventTypeId))
+                () -> new NotFoundException(String.format(
+                        MESSAGE_NOT_FOUND_EXCEPTION,
+                        OBJECT_EVENT_TYPE,
+                        String.format(FORMAT_ID_TEXT, eventTypeId)
+                ))
         );
         EventPattern retrievedEventPattern = eventPatternDao.findById(eventPatternId).orElseThrow(
-                () -> new NotFoundException(String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + eventPatternId))
+                () -> new NotFoundException(String.format(
+                        MESSAGE_NOT_FOUND_EXCEPTION,
+                        OBJECT_EVENT_PATTERN,
+                        String.format(FORMAT_ID_TEXT, eventPatternId))
+                )
         );
         // Link or unlink according to the received status
         if (linkStatus) {
@@ -255,10 +299,10 @@ public class EventPatternServiceImpl implements EventPatternService {
                 String exceptionMessage = String.format(
                         MESSAGE_LINK_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
-                        "id=" + eventPatternId,
+                        String.format(FORMAT_ID_TEXT, eventPatternId),
                         OPERATION_LINK,
                         OBJECT_EVENT_TYPE,
-                        "id=" + eventTypeId,
+                        String.format(FORMAT_ID_TEXT, eventTypeId),
                         OPERATION_WORD_ALREADY
                 );
                 throw new LinkException(exceptionMessage);
@@ -273,10 +317,10 @@ public class EventPatternServiceImpl implements EventPatternService {
                 String exceptionMessage = String.format(
                         MESSAGE_LINK_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
-                        "id=" + eventPatternId,
+                        String.format(FORMAT_ID_TEXT, eventPatternId),
                         OPERATION_UNLINK,
                         OBJECT_EVENT_TYPE,
-                        "id=" + eventTypeId,
+                        String.format(FORMAT_ID_TEXT, eventTypeId),
                         OPERATION_WORD_NOT
                 );
                 throw new LinkException(exceptionMessage);
@@ -293,7 +337,11 @@ public class EventPatternServiceImpl implements EventPatternService {
         if (retrievedEventPattern.isPresent())
             eventPatternDao.delete(retrievedEventPattern.get());
         else {
-            String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
+            String exceptionMessage = String.format(
+                    MESSAGE_NOT_FOUND_EXCEPTION,
+                    OBJECT_EVENT_PATTERN,
+                    String.format(FORMAT_ID_TEXT, id)
+            );
             throw new NotFoundException(exceptionMessage);
         }
     }

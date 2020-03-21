@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.gamaza.rest4cep.config.constant.ExceptionConstants.MESSAGE_NOT_FOUND_EXCEPTION;
-import static com.gamaza.rest4cep.config.constant.ExceptionConstants.OBJECT_EVENT_PATTERN;
+import static com.gamaza.rest4cep.config.constant.ExceptionConstants.*;
 
 /**
  * Event Pattern Service Implementation
@@ -54,7 +53,11 @@ public class EventPatternMongoServiceImpl implements EventPatternMongoService {
     public EventPatternMongoDto readOneById(String id) {
         EventPatternMongo retrievedEventPatternMongo = eventPatternMongoDao.findById(id).orElseThrow(
                 () -> {
-                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
+                    String exceptionMessage = String.format(
+                            MESSAGE_NOT_FOUND_EXCEPTION,
+                            OBJECT_EVENT_PATTERN,
+                            String.format(FORMAT_ID_TEXT, id)
+                    );
                     throw new NotFoundException(exceptionMessage);
                 }
         );
@@ -78,7 +81,11 @@ public class EventPatternMongoServiceImpl implements EventPatternMongoService {
     public void deleteOne(String id) {
         EventPatternMongo retrievedEventPatternMongo = eventPatternMongoDao.findById(id).orElseThrow(
                 () -> {
-                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
+                    String exceptionMessage = String.format(
+                            MESSAGE_NOT_FOUND_EXCEPTION,
+                            OBJECT_EVENT_PATTERN,
+                            String.format(FORMAT_ID_TEXT, id)
+                    );
                     throw new NotFoundException(exceptionMessage);
                 }
         );
