@@ -7,7 +7,7 @@ server:
 # Spring related properties
 spring:
     profiles:
-        active: pro
+        active: rest4cep
     jpa:
         open-in-view: false
         show-sql: false
