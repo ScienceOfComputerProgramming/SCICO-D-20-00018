@@ -1,8 +1,16 @@
+# Server related properties
 server:
     port: 6443
     servlet:
         context-path: /rest4cep
+
+# Spring related properties
 spring:
+    profiles:
+        active: pro
+    jpa:
+        open-in-view: false
+        show-sql: false
     data:
         mongodb:
             host: angelgamaza.es
@@ -12,7 +20,7 @@ spring:
             username: rest4cep
             password: REST4CEP.2020$
     datasource:
+        driver-class-name: com.mysql.jdbc.Driver
         url: jdbc:mysql://angelgamaza.es/rest4cep?useSSL=false
         username: rest4cep
         password: REST4CEP.2020$
-        
