@@ -18,6 +18,7 @@ public final class ExceptionConstants {
     // Comments
     public static final String COMMENTS_UPDATE_STATUS_EMPTY_EVENT_TYPES = "It is not linked with any %s";
     public static final String COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_EVENT_TYPE = "It has %s %s objects not enabled";
+    public static final String COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_PATTERN_CONTENT = "It has %s %s objects not present in his content query";
 
     // Operation strings
     public static final String OPERATION_LINK = "link";

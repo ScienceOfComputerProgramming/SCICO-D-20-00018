@@ -16,7 +16,6 @@ import com.gamaza.rest4cep.mysql.service.EventPatternService;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,9 +73,9 @@ public class EventPatternServiceImpl implements EventPatternService {
 
     @Override
     public EventPatternWithListDto readOneById(Integer id) {
-        Optional<EventPattern> retrievedEventMapper = eventPatternDao.findById(id);
-        if (retrievedEventMapper.isPresent())
-            return eventPatternMapper.mapToDtoWithList(retrievedEventMapper.get());
+        Optional<EventPattern> retrievedEventPattern = eventPatternDao.findById(id);
+        if (retrievedEventPattern.isPresent())
+            return eventPatternMapper.mapToDtoWithList(retrievedEventPattern.get());
         else {
             String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
             throw new NotFoundException(exceptionMessage);
@@ -85,9 +84,9 @@ public class EventPatternServiceImpl implements EventPatternService {
 
     @Override
     public EventPatternWithListDto readOneByName(String name) {
-        Optional<EventPattern> retrievedEventMapper = eventPatternDao.findByName(name);
-        if (retrievedEventMapper.isPresent())
-            return eventPatternMapper.mapToDtoWithList(retrievedEventMapper.get());
+        Optional<EventPattern> retrievedEventPattern = eventPatternDao.findByName(name);
+        if (retrievedEventPattern.isPresent())
+            return eventPatternMapper.mapToDtoWithList(retrievedEventPattern.get());
         else {
             String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "name=" + name);
             throw new NotFoundException(exceptionMessage);
@@ -134,7 +133,7 @@ public class EventPatternServiceImpl implements EventPatternService {
                 );
                 throw new UpdateException(exceptionMessage);
             }
-            checkLinkedEventTypesStatus(id, retrievedEventPattern.getEventTypes());
+            checkLinkedEventTypesStatus(retrievedEventPattern);
         } else {
             // If the Event Pattern is not ready to deploy, it can not be set at the same state
             if (!retrievedEventPattern.isReadyToDeploy()) {
@@ -171,7 +170,6 @@ public class EventPatternServiceImpl implements EventPatternService {
                 );
                 throw new UpdateException(exceptionMessage);
             }
-            checkLinkedEventTypesStatus(id, retrievedEventPattern.getEventTypes());
         } else {
             // If the Event Pattern is not deployed, it can not be set at the same state
             if (!retrievedEventPattern.isDeployed()) {
@@ -186,16 +184,17 @@ public class EventPatternServiceImpl implements EventPatternService {
         }
         retrievedEventPattern.setDeployed(status);
         eventPatternDao.save(retrievedEventPattern);
-
     }
 
     /**
-     * Private function to check if the received Event Type list contains any disabled Event Type
+     * Private function to check if the received Event Pattern is correct with his related Event Types
      *
-     * @param eventPatternId The id of the related Event Pattern
-     * @param eventTypes     The Event Types list
+     * @param retrievedEventPattern The retrieved pattern from database
      */
-    private void checkLinkedEventTypesStatus(Integer eventPatternId, List<EventType> eventTypes) {
+    private void checkLinkedEventTypesStatus(EventPattern retrievedEventPattern) {
+        // Get the related Event Types of the Event Pattern
+        List<EventType> eventTypes = retrievedEventPattern.getEventTypes();
+        Integer eventPatternId = retrievedEventPattern.getId();
         // If the Event Pattern has not linked Event Types, it cannot be deployed
         if (eventTypes.isEmpty()) {
             String exceptionMessage = String.format(
@@ -207,17 +206,30 @@ public class EventPatternServiceImpl implements EventPatternService {
             throw new UpdateException(exceptionMessage);
         }
         // If the Event Pattern has disabled Event Types, it cannot be deployed
-        List<String> notEnabledEventTypes = new ArrayList<>();
-        eventTypes.forEach(eventType -> {
-            if (!eventType.isEnabled())
-                notEnabledEventTypes.add(eventType.getName());
-        });
+        List<String> notEnabledEventTypes = eventTypes.stream()
+                .filter(currentEventType -> !currentEventType.isEnabled())
+                .map(EventType::getName)
+                .collect(Collectors.toList());
         if (!notEnabledEventTypes.isEmpty()) {
             String exceptionMessage = String.format(
                     MESSAGE_UPDATE_STATUS_EVENT_PATTERN_EXCEPTION,
                     OBJECT_EVENT_PATTERN,
                     "id=" + eventPatternId,
                     String.format(COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_EVENT_TYPE, notEnabledEventTypes, OBJECT_EVENT_TYPE)
+            );
+            throw new UpdateException(exceptionMessage);
+        }
+        // Check that the Event Pattern content contains his Event Types linked written in the queries
+        List<String> notContainedEventTypes = eventTypes.stream()
+                .map(EventType::getName)
+                .filter(currentEventType -> !retrievedEventPattern.getContent().contains(currentEventType))
+                .collect(Collectors.toList());
+        if (!notContainedEventTypes.isEmpty()) {
+            String exceptionMessage = String.format(
+                    MESSAGE_UPDATE_STATUS_EVENT_PATTERN_EXCEPTION,
+                    OBJECT_EVENT_PATTERN,
+                    "id=" + eventPatternId,
+                    String.format(COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_PATTERN_CONTENT, notContainedEventTypes, OBJECT_EVENT_TYPE)
             );
             throw new UpdateException(exceptionMessage);
         }
@@ -277,7 +289,13 @@ public class EventPatternServiceImpl implements EventPatternService {
 
     @Override
     public void delete(Integer id) {
-        eventPatternDao.deleteById(id);
+        Optional<EventPattern> retrievedEventPattern = eventPatternDao.findById(id);
+        if (retrievedEventPattern.isPresent())
+            eventPatternDao.delete(retrievedEventPattern.get());
+        else {
+            String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
+            throw new NotFoundException(exceptionMessage);
+        }
     }
 
 }

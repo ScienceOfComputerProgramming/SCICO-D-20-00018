@@ -1,13 +1,13 @@
 package com.gamaza.rest4cep.mysql.service.impl;
 
+import com.gamaza.rest4cep.config.exception.NotFoundException;
+import com.gamaza.rest4cep.config.exception.UpdateException;
 import com.gamaza.rest4cep.mysql.dao.EventPatternDao;
 import com.gamaza.rest4cep.mysql.dao.EventTypeDao;
 import com.gamaza.rest4cep.mysql.dto.EventTypeDto;
 import com.gamaza.rest4cep.mysql.dto.EventTypePostDto;
 import com.gamaza.rest4cep.mysql.dto.EventTypePutDto;
 import com.gamaza.rest4cep.mysql.dto.EventTypeWithListDto;
-import com.gamaza.rest4cep.config.exception.NotFoundException;
-import com.gamaza.rest4cep.config.exception.UpdateException;
 import com.gamaza.rest4cep.mysql.mapper.EventTypeMapper;
 import com.gamaza.rest4cep.mysql.model.EventType;
 import com.gamaza.rest4cep.mysql.service.EventTypeService;
@@ -136,7 +136,7 @@ public class EventTypeServiceImpl implements EventTypeService {
                         MESSAGE_UPDATE_STATUS_EVENT_TYPE_EXCEPTION,
                         OBJECT_EVENT_TYPE,
                         "id=" + id,
-                        OPERATION_WORD_ALREADY
+                        OPERATION_WORD_NOT
                 );
                 throw new UpdateException(exceptionMessage);
             }
@@ -146,7 +146,7 @@ public class EventTypeServiceImpl implements EventTypeService {
                         MESSAGE_UPDATE_STATUS_EVENT_TYPE_EXCEPTION,
                         OBJECT_EVENT_TYPE,
                         "id=" + id,
-                        OPERATION_WORD_NOT
+                        OPERATION_WORD_ALREADY
                 );
                 throw new UpdateException(exceptionMessage);
             }
