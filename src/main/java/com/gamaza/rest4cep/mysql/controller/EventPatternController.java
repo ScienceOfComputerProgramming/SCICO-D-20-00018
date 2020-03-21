@@ -87,7 +87,7 @@ public class EventPatternController {
         eventPatternService.setPatternLink(eventPatternId, eventTypeId, true);
     }
 
-    @PostMapping(value = "/unlink")
+    @DeleteMapping(value = "/unlink")
     public void unlink(@RequestParam Integer eventPatternId, @RequestParam Integer eventTypeId) {
         eventPatternService.setPatternLink(eventPatternId, eventTypeId, false);
     }
