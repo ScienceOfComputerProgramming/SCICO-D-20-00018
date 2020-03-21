@@ -86,7 +86,7 @@ CREATE TABLE event_type
 -- Inserts event_type
 INSERT INTO event_type (channel_id, name, description, is_enabled)
 VALUES (170892, 'AirSensors', 'Sensors for AIR Quality', 1),
-       (545022, 'WaterSensors', 'Sensors for Water Quality.', 0);
+       (545022, 'WaterSensors', 'Sensors for Water Quality', 0);
 
 -- --------------------------------------------------------
 

@@ -20,7 +20,8 @@ public final class EntityConstants {
     public static final String JOIN_COLUMN_ROLE_ID = "role_id";
 
     // Relation fields
-    public static final String RELATION_FIELD_EVENT_TYPES = "eventPatterns";
+    public static final String RELATION_FIELD_EVENT_PATTERNS = "eventPatterns";
+    public static final String RELATION_FIELD_EVENT_TYPES = "eventTypes";
     public static final String RELATION_FIELD_ROLES = "roles";
 
     // Field names

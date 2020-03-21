@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.gamaza.rest4cep.config.constant.EntityConstants.RELATION_FIELD_EVENT_TYPES;
+import static com.gamaza.rest4cep.config.constant.EntityConstants.RELATION_FIELD_EVENT_PATTERNS;
 import static com.gamaza.rest4cep.config.constant.EntityConstants.TABLE_EVENT_PATTERN;
 
 /**
@@ -35,7 +35,7 @@ public class EventPattern extends Auditable {
     @Column(name = "is_deployed", nullable = false)
     private boolean deployed;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = RELATION_FIELD_EVENT_TYPES)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = RELATION_FIELD_EVENT_PATTERNS)
     private List<EventType> eventTypes = new ArrayList<>();
 
 }

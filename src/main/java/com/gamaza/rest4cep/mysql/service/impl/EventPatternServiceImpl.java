@@ -1,14 +1,14 @@
 package com.gamaza.rest4cep.mysql.service.impl;
 
+import com.gamaza.rest4cep.config.exception.LinkException;
+import com.gamaza.rest4cep.config.exception.NotFoundException;
+import com.gamaza.rest4cep.config.exception.UpdateException;
 import com.gamaza.rest4cep.mysql.dao.EventPatternDao;
 import com.gamaza.rest4cep.mysql.dao.EventTypeDao;
 import com.gamaza.rest4cep.mysql.dto.EventPatternDto;
 import com.gamaza.rest4cep.mysql.dto.EventPatternPostDto;
 import com.gamaza.rest4cep.mysql.dto.EventPatternPutDto;
 import com.gamaza.rest4cep.mysql.dto.EventPatternWithListDto;
-import com.gamaza.rest4cep.config.exception.LinkException;
-import com.gamaza.rest4cep.config.exception.NotFoundException;
-import com.gamaza.rest4cep.config.exception.UpdateException;
 import com.gamaza.rest4cep.mysql.mapper.EventPatternMapper;
 import com.gamaza.rest4cep.mysql.model.EventPattern;
 import com.gamaza.rest4cep.mysql.model.EventType;
@@ -148,6 +148,45 @@ public class EventPatternServiceImpl implements EventPatternService {
             }
         }
         eventPatternDao.updateStatus(id, status);
+    }
+
+    @Override
+    public void updateDeployingStatus(Integer id, boolean status) {
+        // Retrieve the Event Pattern from database (if exists)
+        EventPattern retrievedEventPattern = eventPatternDao.findById(id).orElseThrow(
+                () -> {
+                    String exceptionMessage = String.format(MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_PATTERN, "id=" + id);
+                    throw new NotFoundException(exceptionMessage);
+                }
+        );
+        // Change the status according to the received value
+        if (status) {
+            // If the Event Pattern is deployed, it can not be set at the same state
+            if (retrievedEventPattern.isDeployed()) {
+                String exceptionMessage = String.format(
+                        MESSAGE_UPDATE_STATUS_DEPLOYED_EVENT_PATTERN_EXCEPTION,
+                        OBJECT_EVENT_PATTERN,
+                        "id=" + id,
+                        OPERATION_WORD_ALREADY
+                );
+                throw new UpdateException(exceptionMessage);
+            }
+            checkLinkedEventTypesStatus(id, retrievedEventPattern.getEventTypes());
+        } else {
+            // If the Event Pattern is not deployed, it can not be set at the same state
+            if (!retrievedEventPattern.isDeployed()) {
+                String exceptionMessage = String.format(
+                        MESSAGE_UPDATE_STATUS_DEPLOYED_EVENT_PATTERN_EXCEPTION,
+                        OBJECT_EVENT_PATTERN,
+                        "id=" + id,
+                        OPERATION_WORD_NOT
+                );
+                throw new UpdateException(exceptionMessage);
+            }
+        }
+        retrievedEventPattern.setDeployed(status);
+        eventPatternDao.save(retrievedEventPattern);
+
     }
 
     /**

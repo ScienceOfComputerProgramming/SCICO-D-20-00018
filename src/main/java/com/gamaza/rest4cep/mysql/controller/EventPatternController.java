@@ -72,14 +72,24 @@ public class EventPatternController {
         eventPatternService.update(id, eventPatternPutDto);
     }
 
-    @PutMapping(value = "/readytodeploy/{id}")
-    public void deploy(@PathVariable Integer id) {
+    @PutMapping(value = "/ready/{id}")
+    public void readyToDeploy(@PathVariable Integer id) {
         eventPatternService.updateStatus(id, true);
     }
 
-    @PutMapping(value = "/notreadytodeploy/{id}")
-    public void undeploy(@PathVariable Integer id) {
+    @PutMapping(value = "/unready/{id}")
+    public void unReadyToDeploy(@PathVariable Integer id) {
         eventPatternService.updateStatus(id, false);
+    }
+
+    @PutMapping(value = "/deploy/{id}")
+    public void deploy(@PathVariable Integer id) {
+        eventPatternService.updateDeployingStatus(id, true);
+    }
+
+    @PutMapping(value = "/undeploy/{id}")
+    public void undeploy(@PathVariable Integer id) {
+        eventPatternService.updateDeployingStatus(id, false);
     }
 
     @PostMapping(value = "/link")

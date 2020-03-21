@@ -1,6 +1,7 @@
 package com.gamaza.rest4cep.mysql.dao;
 
 import com.gamaza.rest4cep.mysql.model.EventPattern;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -11,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.gamaza.rest4cep.config.constant.EntityConstants.RELATION_FIELD_EVENT_TYPES;
+
 /**
  * Event Pattern Data Access Object
  */
@@ -18,8 +21,16 @@ import java.util.Optional;
 public interface EventPatternDao extends CrudRepository<EventPattern, Integer> {
 
     /**
+     * Search Event Patterns in database by id (Override)
+     */
+    @Override
+    @EntityGraph(attributePaths = RELATION_FIELD_EVENT_TYPES)
+    Optional<EventPattern> findById(Integer id);
+
+    /**
      * Search Event Patterns in database by name
      */
+    @EntityGraph(attributePaths = RELATION_FIELD_EVENT_TYPES)
     Optional<EventPattern> findByName(String name);
 
     /**

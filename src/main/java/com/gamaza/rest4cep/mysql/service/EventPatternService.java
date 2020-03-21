@@ -48,9 +48,14 @@ public interface EventPatternService {
     void update(Integer id, EventPatternPutDto eventPatternPutDto);
 
     /**
-     * Update the status of one Event Pattern in database (readAllByIsReadyToDeploy variable)
+     * Update the status of one Event Pattern in database (readyToDeploy variable)
      */
     void updateStatus(Integer id, boolean status);
+
+    /**
+     * Update the status of one Event Pattern in database (deployed variable)
+     */
+    void updateDeployingStatus(Integer id, boolean status);
 
     /**
      * Link/Unlink one Event Pattern with an Event Type

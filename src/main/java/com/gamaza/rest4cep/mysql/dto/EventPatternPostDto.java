@@ -24,6 +24,4 @@ public class EventPatternPostDto implements Serializable {
     @NotBlank(message = "Content for the Event Type can not be blank")
     private String content;
 
-    private boolean readyToDeploy;
-
 }
