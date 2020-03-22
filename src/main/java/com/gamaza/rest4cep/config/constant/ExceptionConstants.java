@@ -10,7 +10,7 @@ public final class ExceptionConstants {
     public static final String MESSAGE_ALREADY_EXISTS_EXCEPTION = "The object %s with %s already exists";
     public static final String MESSAGE_UPDATE_EVENT_TYPE_EXCEPTION = "The object %s with %s has to be disabled before update";
     public static final String MESSAGE_UPDATE_STATUS_EVENT_TYPE_EXCEPTION = "The object %s with %s is %s enabled";
-    public static final String MESSAGE_UPDATE_EVENT_PATTERN_EXCEPTION = "The object %s with %s can not be updated because it is currently deployed";
+    public static final String MESSAGE_UPDATE_EVENT_PATTERN_EXCEPTION = "The object %s with %s can not be updated because [readyToDeploy=%s]";
     public static final String MESSAGE_UPDATE_STATUS_EVENT_PATTERN_EXCEPTION = "The object %s with %s can not be set ready to deploy because: %s";
     public static final String MESSAGE_UPDATE_STATUS_INCONSISTENT_EVENT_PATTERN_EXCEPTION = "The object %s with %s is %s ready to deploy";
     public static final String MESSAGE_UPDATE_STATUS_DEPLOYED_EVENT_PATTERN_EXCEPTION = "The object %s with %s is %s deployed";

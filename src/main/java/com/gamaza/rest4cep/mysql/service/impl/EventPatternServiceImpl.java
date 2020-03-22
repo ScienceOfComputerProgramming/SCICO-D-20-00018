@@ -134,7 +134,8 @@ public class EventPatternServiceImpl implements EventPatternService {
             String exceptionMessage = String.format(
                     MESSAGE_UPDATE_EVENT_PATTERN_EXCEPTION,
                     OBJECT_EVENT_PATTERN,
-                    String.format(FORMAT_ID_TEXT, id)
+                    String.format(FORMAT_ID_TEXT, id),
+                    true
             );
             throw new UpdateException(exceptionMessage);
         }
@@ -203,6 +204,16 @@ public class EventPatternServiceImpl implements EventPatternService {
                         OBJECT_EVENT_PATTERN,
                         String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_ALREADY
+                );
+                throw new UpdateException(exceptionMessage);
+            }
+            // If the Event Pattern is not ready to deploy, it can not be deployed
+            if (!retrievedEventPattern.isReadyToDeploy()) {
+                String exceptionMessage = String.format(
+                        MESSAGE_UPDATE_EVENT_PATTERN_EXCEPTION,
+                        OBJECT_EVENT_PATTERN,
+                        String.format(FORMAT_ID_TEXT, id),
+                        false
                 );
                 throw new UpdateException(exceptionMessage);
             }
@@ -288,10 +299,17 @@ public class EventPatternServiceImpl implements EventPatternService {
                         String.format(FORMAT_ID_TEXT, eventPatternId))
                 )
         );
+        // Get the Event Type names into a list
+        List<String> eventTypeNames = retrievedEventPattern.getEventTypes()
+                .stream()
+                .map(EventType::getName)
+                .collect(Collectors.toList());
+        String retrievedEventTypeName = retrievedEventType.getName();
+        String retrievedEventPatternName = retrievedEventPattern.getName();
         // Link or unlink according to the received status
         if (linkStatus) {
             // Check that the Event Pattern and the Event Pattern received are not linked
-            if (!retrievedEventPattern.getEventTypes().contains(retrievedEventType)) {
+            if (!eventTypeNames.contains(retrievedEventTypeName)) {
                 retrievedEventPattern.getEventTypes().add(retrievedEventType);
                 retrievedEventType.getEventPatterns().add(retrievedEventPattern);
             } else {
@@ -309,9 +327,9 @@ public class EventPatternServiceImpl implements EventPatternService {
             }
         } else {
             // Check that the Event Pattern and the Event Pattern received are linked
-            if (retrievedEventPattern.getEventTypes().contains(retrievedEventType)) {
-                retrievedEventPattern.getEventTypes().remove(retrievedEventType);
-                retrievedEventType.getEventPatterns().remove(retrievedEventPattern);
+            if (eventTypeNames.contains(retrievedEventTypeName)) {
+                retrievedEventPattern.getEventTypes().removeIf(eventType -> eventType.getName().equals(retrievedEventTypeName));
+                retrievedEventType.getEventPatterns().removeIf(eventPattern -> eventPattern.getName().equals(retrievedEventPatternName));
             } else {
                 // Throw an exception in other case
                 String exceptionMessage = String.format(
