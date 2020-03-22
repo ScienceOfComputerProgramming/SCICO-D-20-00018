@@ -221,6 +221,7 @@ CREATE TABLE event_type_event_pattern
     created_date       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_modified_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT pk_event_type_event_pattern PRIMARY KEY (id),
+    CONSTRAINT uindex_event_type_event_pattern UNIQUE (event_type_id, event_pattern_id),
     CONSTRAINT fk_event_type_id FOREIGN KEY (event_type_id)
         REFERENCES event_type (id)
         ON DELETE CASCADE
