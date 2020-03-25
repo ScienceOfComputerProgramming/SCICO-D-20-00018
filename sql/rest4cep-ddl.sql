@@ -57,14 +57,14 @@ CREATE TABLE ldap_user_role
 CREATE TABLE event_type
 (
     id                 INT(4)      NOT NULL AUTO_INCREMENT,
-    channel_id         INT(16)     NOT NULL,
     name               VARCHAR(64) NOT NULL,
+    structure          TEXT        NOT NULL,
     description        TEXT        NOT NULL,
-    is_enabled         BOOLEAN     NOT NULL DEFAULT 0,
+    is_ready_to_deploy BOOLEAN     NOT NULL DEFAULT 0,
+    is_deployed        BOOLEAN     NOT NULL DEFAULT 0,
     created_date       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_modified_date TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT pk_event_type PRIMARY KEY (id),
-    CONSTRAINT uindex_channel_id_event_type UNIQUE (channel_id),
     CONSTRAINT uindex_name_event_type UNIQUE (name)
 );
 
