@@ -9,8 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import static com.gamaza.rest4cep.config.constant.ConfigurationConstants.ROLE_DESIGN;
-import static com.gamaza.rest4cep.config.constant.ConfigurationConstants.ROLE_RUNTIME;
+import static com.gamaza.rest4cep.config.constant.ConfigConstants.ROLE_DESIGN;
+import static com.gamaza.rest4cep.config.constant.ConfigConstants.ROLE_RUNTIME;
 
 /**
  * Security Configuration Class

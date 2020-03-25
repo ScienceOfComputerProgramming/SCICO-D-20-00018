@@ -36,6 +36,8 @@ public final class ExceptionConstants {
     // Object types
     public static final String OBJECT_EVENT_TYPE = "EVENT TYPE";
     public static final String OBJECT_EVENT_PATTERN = "EVENT PATTERN";
+    public static final String OBJECT_EVENT = "EVENT";
+    public static final String OBJECT_INCORECT_EVENT_PATTERN = "INCORRECT EVENT PATTERN";
     public static final String OBJECT_COMPLEX_EVENT_DETECTED = "COMPLEX EVENT DETECTED";
 
     /**

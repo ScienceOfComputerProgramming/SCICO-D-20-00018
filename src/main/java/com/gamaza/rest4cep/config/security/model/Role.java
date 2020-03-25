@@ -1,6 +1,6 @@
 package com.gamaza.rest4cep.config.security.model;
 
-import com.gamaza.rest4cep.mysql.model.Auditable;
+import com.gamaza.rest4cep.design.model.Auditable;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;

@@ -9,10 +9,10 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = {
-        "com.gamaza.rest4cep.mysql.dao",
+        "com.gamaza.rest4cep.design.dao",
         "com.gamaza.rest4cep.config.security.dao"
 })
-@EnableMongoRepositories(basePackages = "com.gamaza.rest4cep.mongo.dao")
+@EnableMongoRepositories(basePackages = "com.gamaza.rest4cep.runtime.dao")
 @EnableJpaAuditing
 @EnableMongoAuditing
 public class Rest4CepApplication {

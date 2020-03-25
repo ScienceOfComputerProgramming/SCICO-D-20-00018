@@ -32,8 +32,8 @@ public final class EntityConstants {
     public static final String DEFAULT_DESCRIPTION = "No description";
 
     // Collection names
-    public static final String COLLECTION_EVENT_TYPE = "event_type";
-    public static final String COLLECTION_EVENT_PATTERN = "event_pattern";
+    public static final String COLLECTION_EVENT = "event";
+    public static final String COLLECTION_INCORRECT_EVENT_PATTERN = "incorrect_event_pattern";
     public static final String COLLECTION_COMPLEX_EVENTS_DETECTED = "complex_events_detected";
 
     /**
