@@ -23,9 +23,14 @@ public interface EventTypeService {
     List<EventTypeDto> readAll();
 
     /**
-     * Get all enabled/disabled Event Types in database
+     * Get all readyToDeploy/notReadyToDeploy Event Types in database
      */
-    List<EventTypeDto> readAllByIsEnabled(boolean status);
+    List<EventTypeDto> readAllByIsReadyToDeploy(boolean status);
+
+    /**
+     * Get all deployed/undeployed Event Types in database
+     */
+    List<EventTypeDto> readAllByIsDeployed(boolean status);
 
     /**
      * Search and return one Event Type by id
@@ -38,19 +43,19 @@ public interface EventTypeService {
     EventTypeWithListDto readOneByName(String name);
 
     /**
-     * Search and return one Event Type by channel id
-     */
-    EventTypeWithListDto readOneByChannelId(Integer channelId);
-
-    /**
      * Modify one Event Type in database
      */
     void update(Integer id, EventTypePutDto eventTypePutDto);
 
     /**
-     * Enable/Disable one Event Type
+     * Update the status of one Event Type in database (readyToDeploy variable)
      */
     void updateStatus(Integer id, boolean status);
+
+    /**
+     * Update the status of one Event Type in database (deployed variable)
+     */
+    void updateDeployingStatus(Integer id, boolean status);
 
     /**
      * Delete one Event Type in database

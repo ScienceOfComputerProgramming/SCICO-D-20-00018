@@ -52,8 +52,8 @@ public class EventTypeServiceImpl implements EventTypeService {
         } catch (DataIntegrityViolationException e) {
             String exceptionMessage = String.format(
                     MESSAGE_ALREADY_EXISTS_EXCEPTION,
-                    OBJECT_EVENT_PATTERN,
-                    String.format(FORMAT_CHANNEL_NAME_TEXT, eventTypePostDto.getChannel(), eventTypePostDto.getName())
+                    OBJECT_EVENT_TYPE,
+                    String.format(FORMAT_NAME_TEXT, eventTypePostDto.getName())
             );
             throw new AlreadyExistsException(exceptionMessage);
         }
@@ -69,8 +69,15 @@ public class EventTypeServiceImpl implements EventTypeService {
     }
 
     @Override
-    public List<EventTypeDto> readAllByIsEnabled(boolean status) {
-        return Lists.newArrayList(eventTypeDao.findAllByEnabled(status)).stream()
+    public List<EventTypeDto> readAllByIsReadyToDeploy(boolean status) {
+        return Lists.newArrayList(eventTypeDao.findAllByReadyToDeploy(status)).stream()
+                .map(eventTypeMapper::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventTypeDto> readAllByIsDeployed(boolean status) {
+        return Lists.newArrayList(eventTypeDao.findAllByDeployed(status)).stream()
                 .map(eventTypeMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -106,34 +113,20 @@ public class EventTypeServiceImpl implements EventTypeService {
     }
 
     @Override
-    public EventTypeWithListDto readOneByChannelId(Integer channelId) {
-        Optional<EventType> retrievedEventType = eventTypeDao.findByChannel(channelId);
-        if (retrievedEventType.isPresent())
-            return eventTypeMapper.mapToDtoWithList(retrievedEventType.get());
-        else {
-            String exceptionMessage = String.format(
-                    MESSAGE_NOT_FOUND_EXCEPTION,
-                    OBJECT_EVENT_TYPE,
-                    String.format(FORMAT_CHANNEL_TEXT, channelId)
-            );
-            throw new NotFoundException(exceptionMessage);
-        }
-    }
-
-    @Override
     public void update(Integer id, EventTypePutDto eventTypePutDto) {
         try {
             // Search the eventType in database for update only if exists
             eventTypeDao.findById(id).ifPresentOrElse(
                     eventType -> {
-                        if (!eventType.isEnabled()) {
+                        if (!eventType.isReadyToDeploy()) {
                             EventType mappedEventType = eventTypeMapper.mapToEntity(eventType, eventTypePutDto);
                             eventTypeDao.save(mappedEventType);
                         } else {
                             String exceptionMessage = String.format(
-                                    MESSAGE_UPDATE_EVENT_TYPE_EXCEPTION,
+                                    MESSAGE_UPDATE_EXCEPTION,
                                     OBJECT_EVENT_TYPE,
-                                    String.format(FORMAT_ID_TEXT, id)
+                                    String.format(FORMAT_ID_TEXT, id),
+                                    true
                             );
                             throw new UpdateException(exceptionMessage);
                         }
@@ -150,8 +143,8 @@ public class EventTypeServiceImpl implements EventTypeService {
         } catch (DataIntegrityViolationException e) {
             String exceptionMessage = String.format(
                     MESSAGE_ALREADY_EXISTS_EXCEPTION,
-                    OBJECT_EVENT_PATTERN,
-                    String.format(FORMAT_CHANNEL_NAME_TEXT, eventTypePutDto.getChannel(), eventTypePutDto.getName())
+                    OBJECT_EVENT_TYPE,
+                    String.format(FORMAT_NAME_TEXT, eventTypePutDto.getName())
             );
             throw new AlreadyExistsException(exceptionMessage);
         }
@@ -160,7 +153,7 @@ public class EventTypeServiceImpl implements EventTypeService {
     @Override
     public void updateStatus(Integer id, boolean status) {
         // Retrieve the Event Type from database (if exists)
-        EventType retrievedEventype = eventTypeDao.findById(id).orElseThrow(
+        EventType retrievedEventType = eventTypeDao.findById(id).orElseThrow(
                 () -> {
                     String exceptionMessage = String.format(
                             MESSAGE_NOT_FOUND_EXCEPTION, OBJECT_EVENT_TYPE,
@@ -171,13 +164,14 @@ public class EventTypeServiceImpl implements EventTypeService {
         );
         // Update status only if the Event Type exists
         if (!status) {
-            if (retrievedEventype.isEnabled()) {
-                retrievedEventype.getEventPatterns().forEach(
+            if (retrievedEventType.isReadyToDeploy()) {
+                retrievedEventType.getEventPatterns().forEach(
                         eventPattern -> eventPatternDao.updateStatus(eventPattern.getId(), false)
                 );
+                retrievedEventType.setDeployed(false);
             } else {
                 String exceptionMessage = String.format(
-                        MESSAGE_UPDATE_STATUS_EVENT_TYPE_EXCEPTION,
+                        MESSAGE_UPDATE_STATUS_INCONSISTENT_EXCEPTION,
                         OBJECT_EVENT_TYPE,
                         String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_NOT
@@ -185,9 +179,9 @@ public class EventTypeServiceImpl implements EventTypeService {
                 throw new UpdateException(exceptionMessage);
             }
         } else {
-            if (retrievedEventype.isEnabled()) {
+            if (retrievedEventType.isReadyToDeploy()) {
                 String exceptionMessage = String.format(
-                        MESSAGE_UPDATE_STATUS_EVENT_TYPE_EXCEPTION,
+                        MESSAGE_UPDATE_STATUS_INCONSISTENT_EXCEPTION,
                         OBJECT_EVENT_TYPE,
                         String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_ALREADY
@@ -196,8 +190,64 @@ public class EventTypeServiceImpl implements EventTypeService {
             }
         }
         // Update Event Type status
-        retrievedEventype.setEnabled(status);
-        eventTypeDao.save(retrievedEventype);
+        retrievedEventType.setReadyToDeploy(status);
+        eventTypeDao.save(retrievedEventType);
+    }
+
+    @Override
+    public void updateDeployingStatus(Integer id, boolean status) {
+        // Retrieve the Event Type from database (if exists)
+        EventType retrievedEventType = eventTypeDao.findById(id).orElseThrow(
+                () -> {
+                    String exceptionMessage = String.format(
+                            MESSAGE_NOT_FOUND_EXCEPTION,
+                            OBJECT_EVENT_TYPE,
+                            String.format(FORMAT_ID_TEXT, id)
+                    );
+                    throw new NotFoundException(exceptionMessage);
+                }
+        );
+        // Change the status according to the received value
+        if (status) {
+            // If the Event Type is deployed, it can not be set at the same state
+            if (retrievedEventType.isDeployed()) {
+                String exceptionMessage = String.format(
+                        MESSAGE_UPDATE_STATUS_DEPLOYED_EXCEPTION,
+                        OBJECT_EVENT_TYPE,
+                        String.format(FORMAT_ID_TEXT, id),
+                        OPERATION_WORD_ALREADY
+                );
+                throw new UpdateException(exceptionMessage);
+            }
+            // If the Event Type is not ready to deploy, it can not be deployed
+            if (!retrievedEventType.isReadyToDeploy()) {
+                String exceptionMessage = String.format(
+                        MESSAGE_UPDATE_EXCEPTION,
+                        OBJECT_EVENT_TYPE,
+                        String.format(FORMAT_ID_TEXT, id),
+                        false
+                );
+                throw new UpdateException(exceptionMessage);
+            }
+        } else {
+            // If the Event Type is not deployed, it can not be set at the same state
+            if (!retrievedEventType.isDeployed()) {
+                String exceptionMessage = String.format(
+                        MESSAGE_UPDATE_STATUS_DEPLOYED_EXCEPTION,
+                        OBJECT_EVENT_TYPE,
+                        String.format(FORMAT_ID_TEXT, id),
+                        OPERATION_WORD_NOT
+                );
+                throw new UpdateException(exceptionMessage);
+            }
+            else {
+                retrievedEventType.getEventPatterns().forEach(
+                        eventPattern -> eventPatternDao.updateStatus(eventPattern.getId(), false)
+                );
+            }
+        }
+        retrievedEventType.setDeployed(status);
+        eventTypeDao.save(retrievedEventType);
     }
 
     @Override

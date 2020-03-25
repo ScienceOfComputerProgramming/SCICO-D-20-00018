@@ -15,8 +15,8 @@ public class EventTypePutDto implements Serializable {
     private static final long serialVersionUID = 5054096826045066018L;
 
     // Private variables
-    private Integer channel;
     private String name;
+    private String structure;
     private String description;
 
 }

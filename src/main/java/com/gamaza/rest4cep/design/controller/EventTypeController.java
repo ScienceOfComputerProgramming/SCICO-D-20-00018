@@ -37,14 +37,24 @@ public class EventTypeController {
         return eventTypeService.readAll();
     }
 
-    @GetMapping(value = "/enabled")
-    public List<EventTypeDto> allEnabled() {
-        return eventTypeService.readAllByIsEnabled(true);
+    @GetMapping(value = "/readytodeploy")
+    public List<EventTypeDto> allReadyToDeploy() {
+        return eventTypeService.readAllByIsReadyToDeploy(true);
     }
 
-    @GetMapping(value = "/disabled")
-    public List<EventTypeDto> allDisabled() {
-        return eventTypeService.readAllByIsEnabled(false);
+    @GetMapping(value = "/unreadytodeploy")
+    public List<EventTypeDto> allNotReadyToDeploy() {
+        return eventTypeService.readAllByIsReadyToDeploy(false);
+    }
+
+    @GetMapping(value = "/deployed")
+    public List<EventTypeDto> allDeployed() {
+        return eventTypeService.readAllByIsDeployed(true);
+    }
+
+    @GetMapping(value = "/notdeployed")
+    public List<EventTypeDto> allNotDeployed() {
+        return eventTypeService.readAllByIsDeployed(false);
     }
 
     @GetMapping(value = "/{id}")
@@ -57,24 +67,29 @@ public class EventTypeController {
         return eventTypeService.readOneByName(name);
     }
 
-    @GetMapping(value = "/channel/{channelId}")
-    public EventTypeWithListDto oneByChannelId(@PathVariable Integer channelId) {
-        return eventTypeService.readOneByChannelId(channelId);
-    }
-
     @PutMapping(value = "/{id}")
     public void update(@PathVariable Integer id, @Valid @RequestBody EventTypePutDto eventTypePutDto) {
         eventTypeService.update(id, eventTypePutDto);
     }
 
-    @PutMapping(value = "/enable/{id}")
-    public void enable(@PathVariable Integer id) {
+    @PutMapping(value = "/ready/{id}")
+    public void readyToDeploy(@PathVariable Integer id) {
         eventTypeService.updateStatus(id, true);
     }
 
-    @PutMapping(value = "/disable/{id}")
-    public void disable(@PathVariable Integer id) {
+    @PutMapping(value = "/unready/{id}")
+    public void unReadyToDeploy(@PathVariable Integer id) {
         eventTypeService.updateStatus(id, false);
+    }
+
+    @PutMapping(value = "/deploy/{id}")
+    public void deploy(@PathVariable Integer id) {
+        eventTypeService.updateDeployingStatus(id, true);
+    }
+
+    @PutMapping(value = "/undeploy/{id}")
+    public void undeploy(@PathVariable Integer id) {
+        eventTypeService.updateDeployingStatus(id, false);
     }
 
     @DeleteMapping(value = "/{id}")

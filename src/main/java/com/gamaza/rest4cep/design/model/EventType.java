@@ -14,8 +14,7 @@ import static com.gamaza.rest4cep.config.constant.EntityConstants.*;
  */
 @Entity
 @Table(name = TABLE_EVENT_TYPE)
-@Getter
-@Setter
+@Getter @Setter
 public class EventType extends Auditable {
 
     @Id
@@ -23,17 +22,20 @@ public class EventType extends Auditable {
     @Column(name = "id", nullable = false, unique = true)
     private Integer id;
 
-    @Column(name = "channel_id", nullable = false, unique = true)
-    private Integer channel;
-
     @Column(name = "name", nullable = false, unique = true)
     private String name;
+
+    @Column(name = "structure", nullable = false)
+    private String structure;
 
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "is_enabled", nullable = false)
-    private boolean enabled;
+    @Column(name = "is_ready_to_deploy", nullable = false)
+    private boolean readyToDeploy;
+
+    @Column(name = "is_deployed", nullable = false)
+    private boolean deployed;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

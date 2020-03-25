@@ -17,9 +17,14 @@ import static com.gamaza.rest4cep.config.constant.EntityConstants.RELATION_FIELD
 public interface EventTypeDao extends CrudRepository<EventType, Integer> {
 
     /**
-     * Get all enabled/disabled Event Types in database
+     * Search all readyToDeploy/notReadyToDeploy Event Types in database
      */
-    List<EventType> findAllByEnabled(boolean status);
+    List<EventType> findAllByReadyToDeploy(boolean status);
+
+    /**
+     * Search all deployed/undeployed Event Types in database
+     */
+    List<EventType> findAllByDeployed(boolean status);
 
     /**
      * Search Event Types in database by id (Override)
@@ -33,11 +38,5 @@ public interface EventTypeDao extends CrudRepository<EventType, Integer> {
      */
     @EntityGraph(attributePaths = RELATION_FIELD_EVENT_PATTERNS)
     Optional<EventType> findByName(String name);
-
-    /**
-     * Search Event Types in database by channel id
-     */
-    @EntityGraph(attributePaths = RELATION_FIELD_EVENT_PATTERNS)
-    Optional<EventType> findByChannel(Integer channelId);
 
 }

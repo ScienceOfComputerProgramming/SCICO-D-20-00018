@@ -18,10 +18,11 @@ public class EventTypeDto implements Serializable {
 
     // Private variables
     private Integer id;
-    private Integer channel;
     private String name;
+    private String structure;
     private String description;
-    private boolean enabled;
+    private boolean readyToDeploy;
+    private boolean deployed;
     private Timestamp createdDate;
     private Timestamp lastModifiedDate;
 

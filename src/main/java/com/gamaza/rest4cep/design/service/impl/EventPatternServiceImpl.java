@@ -132,7 +132,7 @@ public class EventPatternServiceImpl implements EventPatternService {
             eventPatternDao.save(mappedEventPattern);
         } else {
             String exceptionMessage = String.format(
-                    MESSAGE_UPDATE_EVENT_PATTERN_EXCEPTION,
+                    MESSAGE_UPDATE_EXCEPTION,
                     OBJECT_EVENT_PATTERN,
                     String.format(FORMAT_ID_TEXT, id),
                     true
@@ -159,7 +159,7 @@ public class EventPatternServiceImpl implements EventPatternService {
             // If the Event Pattern is ready to deploy, it can not be set at the same state
             if (retrievedEventPattern.isReadyToDeploy()) {
                 String exceptionMessage = String.format(
-                        MESSAGE_UPDATE_STATUS_INCONSISTENT_EVENT_PATTERN_EXCEPTION,
+                        MESSAGE_UPDATE_STATUS_INCONSISTENT_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
                         String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_ALREADY
@@ -171,15 +171,17 @@ public class EventPatternServiceImpl implements EventPatternService {
             // If the Event Pattern is not ready to deploy, it can not be set at the same state
             if (!retrievedEventPattern.isReadyToDeploy()) {
                 String exceptionMessage = String.format(
-                        MESSAGE_UPDATE_STATUS_INCONSISTENT_EVENT_PATTERN_EXCEPTION,
+                        MESSAGE_UPDATE_STATUS_INCONSISTENT_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
                         String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_NOT
                 );
                 throw new UpdateException(exceptionMessage);
             }
+            retrievedEventPattern.setDeployed(false);
         }
-        eventPatternDao.updateStatus(id, status);
+        retrievedEventPattern.setReadyToDeploy(status);
+        eventPatternDao.save(retrievedEventPattern);
     }
 
     @Override
@@ -200,7 +202,7 @@ public class EventPatternServiceImpl implements EventPatternService {
             // If the Event Pattern is deployed, it can not be set at the same state
             if (retrievedEventPattern.isDeployed()) {
                 String exceptionMessage = String.format(
-                        MESSAGE_UPDATE_STATUS_DEPLOYED_EVENT_PATTERN_EXCEPTION,
+                        MESSAGE_UPDATE_STATUS_DEPLOYED_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
                         String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_ALREADY
@@ -210,7 +212,7 @@ public class EventPatternServiceImpl implements EventPatternService {
             // If the Event Pattern is not ready to deploy, it can not be deployed
             if (!retrievedEventPattern.isReadyToDeploy()) {
                 String exceptionMessage = String.format(
-                        MESSAGE_UPDATE_EVENT_PATTERN_EXCEPTION,
+                        MESSAGE_UPDATE_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
                         String.format(FORMAT_ID_TEXT, id),
                         false
@@ -221,7 +223,7 @@ public class EventPatternServiceImpl implements EventPatternService {
             // If the Event Pattern is not deployed, it can not be set at the same state
             if (!retrievedEventPattern.isDeployed()) {
                 String exceptionMessage = String.format(
-                        MESSAGE_UPDATE_STATUS_DEPLOYED_EVENT_PATTERN_EXCEPTION,
+                        MESSAGE_UPDATE_STATUS_DEPLOYED_EXCEPTION,
                         OBJECT_EVENT_PATTERN,
                         String.format(FORMAT_ID_TEXT, id),
                         OPERATION_WORD_NOT
@@ -245,7 +247,7 @@ public class EventPatternServiceImpl implements EventPatternService {
         // If the Event Pattern has not linked Event Types, it cannot be deployed
         if (eventTypes.isEmpty()) {
             String exceptionMessage = String.format(
-                    MESSAGE_UPDATE_STATUS_EVENT_PATTERN_EXCEPTION,
+                    MESSAGE_UPDATE_STATUS_EXCEPTION,
                     OBJECT_EVENT_PATTERN,
                     String.format(FORMAT_ID_TEXT, eventPatternId),
                     String.format(COMMENTS_UPDATE_STATUS_EMPTY_EVENT_TYPES, OBJECT_EVENT_TYPE)
@@ -253,16 +255,16 @@ public class EventPatternServiceImpl implements EventPatternService {
             throw new UpdateException(exceptionMessage);
         }
         // If the Event Pattern has disabled Event Types, it cannot be deployed
-        List<String> notEnabledEventTypes = eventTypes.stream()
-                .filter(currentEventType -> !currentEventType.isEnabled())
+        List<String> notDeployedEventTypes = eventTypes.stream()
+                .filter(currentEventType -> !currentEventType.isDeployed())
                 .map(EventType::getName)
                 .collect(Collectors.toList());
-        if (!notEnabledEventTypes.isEmpty()) {
+        if (!notDeployedEventTypes.isEmpty()) {
             String exceptionMessage = String.format(
-                    MESSAGE_UPDATE_STATUS_EVENT_PATTERN_EXCEPTION,
+                    MESSAGE_UPDATE_STATUS_EXCEPTION,
                     OBJECT_EVENT_PATTERN,
                     String.format(FORMAT_ID_TEXT, eventPatternId),
-                    String.format(COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_EVENT_TYPE, notEnabledEventTypes, OBJECT_EVENT_TYPE)
+                    String.format(COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_EVENT_TYPE, notDeployedEventTypes, OBJECT_EVENT_TYPE)
             );
             throw new UpdateException(exceptionMessage);
         }
@@ -273,7 +275,7 @@ public class EventPatternServiceImpl implements EventPatternService {
                 .collect(Collectors.toList());
         if (!notContainedEventTypes.isEmpty()) {
             String exceptionMessage = String.format(
-                    MESSAGE_UPDATE_STATUS_EVENT_PATTERN_EXCEPTION,
+                    MESSAGE_UPDATE_STATUS_EXCEPTION,
                     OBJECT_EVENT_PATTERN,
                     String.format(FORMAT_ID_TEXT, eventPatternId),
                     String.format(COMMENTS_UPDATE_STATUS_NOT_DEPLOYED_PATTERN_CONTENT, notContainedEventTypes, OBJECT_EVENT_TYPE)
