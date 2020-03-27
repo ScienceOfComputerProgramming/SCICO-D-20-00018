@@ -55,7 +55,7 @@ public class IncorrectEventPatternServiceImpl implements IncorrectEventPatternSe
                 () -> {
                     String exceptionMessage = String.format(
                             MESSAGE_NOT_FOUND_EXCEPTION,
-                            OBJECT_INCORECT_EVENT_PATTERN,
+                            OBJECT_INCORRECT_EVENT_PATTERN,
                             String.format(FORMAT_ID_TEXT, id)
                     );
                     throw new NotFoundException(exceptionMessage);
@@ -83,7 +83,7 @@ public class IncorrectEventPatternServiceImpl implements IncorrectEventPatternSe
                 () -> {
                     String exceptionMessage = String.format(
                             MESSAGE_NOT_FOUND_EXCEPTION,
-                            OBJECT_INCORECT_EVENT_PATTERN,
+                            OBJECT_INCORRECT_EVENT_PATTERN,
                             String.format(FORMAT_ID_TEXT, id)
                     );
                     throw new NotFoundException(exceptionMessage);

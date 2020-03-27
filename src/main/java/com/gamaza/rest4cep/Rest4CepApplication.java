@@ -8,10 +8,7 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = {
-        "com.gamaza.rest4cep.design.dao",
-        "com.gamaza.rest4cep.config.security.dao"
-})
+@EnableJpaRepositories(basePackages = {"com.gamaza.rest4cep.design.dao", "com.gamaza.rest4cep.config.security.dao"})
 @EnableMongoRepositories(basePackages = "com.gamaza.rest4cep.runtime.dao")
 @EnableJpaAuditing
 @EnableMongoAuditing

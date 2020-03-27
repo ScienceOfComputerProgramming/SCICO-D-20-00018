@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * Incorrect Event Pattern  Controller
+ * Incorrect Event Pattern Controller
  */
 @RestController
 @RequestMapping(value = "/runtime/incorrect_event_pattern")
