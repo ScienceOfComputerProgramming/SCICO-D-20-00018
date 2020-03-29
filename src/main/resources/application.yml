@@ -13,14 +13,14 @@ spring:
         show-sql: false
     data:
         mongodb:
-            host: angelgamaza.es
-            port: 3305
-            authentication-database: rest4cep
-            database: rest4cep
-            username: rest4cep
-            password: REST4CEP.2020$
+            host: localhost
+            port: 27017
+            authentication-database: MongoDataBaseName
+            database: MongoDataBaseName
+            username: MongoUser
+            password: MongoPassword
     datasource:
         driver-class-name: com.mysql.jdbc.Driver
-        url: jdbc:mysql://angelgamaza.es/rest4cep?useSSL=false
+        url: jdbc:mysql://localhost:3306/rest4cep?useSSL=false
         username: rest4cep
-        password: REST4CEP.2020$
+        password: pswrdRest4Cep
